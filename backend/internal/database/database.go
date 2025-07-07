@@ -1,15 +1,16 @@
 package database
 
 import (
-	"database/sql"
 	"fmt"
 	"log"
 	"os"
 
-	_ "github.com/lib/pq"
+	"github.com/othersidedrl/portofolio/backend/internal/models"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
-func ConnectDB() *sql.DB {
+func ConnectDB() *gorm.DB {
 	host := os.Getenv("DB_HOST")
 	if host == "" {
 		host = "localhost"
@@ -31,22 +32,25 @@ func ConnectDB() *sql.DB {
 		psqlDB = "yourdbname"
 	}
 
-	psqlInfo := fmt.Sprintf(
+	dsn := fmt.Sprintf(
 		"host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
 		host, port, username, password, psqlDB,
 	)
 
-	log.Printf("Connecting to database at %s", psqlInfo)
-
-	db, err := sql.Open("postgres", psqlInfo)
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
-		log.Fatalf("Error connecting to the database: %v", err)
+		log.Fatal("Failed to connect to DB:", err)
 	}
 
-	if err = db.Ping(); err != nil {
-		log.Fatalf("Error pinging the database: %v", err)
+	// Auto-migrate tables
+	err = db.AutoMigrate(
+		&models.HeroPage{},
+		// You can add more models here
+	)
+	if err != nil {
+		log.Fatal("Auto migration failed:", err)
 	}
 
-	log.Println("✅ Successfully connected to the database!")
+	log.Println("✅ Connected and migrated DB successfully!")
 	return db
 }

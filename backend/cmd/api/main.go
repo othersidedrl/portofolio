@@ -19,7 +19,7 @@ func main() {
 		Addr: PORT,
 	}
 	db := database.ConnectDB()
-	defer db.Close()
+	_ = db // Ensure the database connection is established
 
 	log.Printf("🚀 Server is running on http://localhost%s", PORT)
 
