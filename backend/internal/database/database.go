@@ -45,6 +45,14 @@ func ConnectDB() *gorm.DB {
 	// Auto-migrate tables
 	err = db.AutoMigrate(
 		&models.HeroPage{},
+		&models.AboutPage{},
+		&models.AboutCard{},
+		&models.TechnicalSkills{},
+		&models.CareerJourney{},
+		&models.TestimonyPage{},
+		&models.Testimony{},
+		&models.ProjectPage{},
+		&models.Project{},
 		// You can add more models here
 	)
 	if err != nil {

@@ -36,8 +36,8 @@ type TechnicalSkills struct {
 	ID           uint        `json:"id" gorm:"primaryKey"`
 	Name         string      `json:"name"`
 	Description  string      `json:"description"`
-	Specialities []string    `json:"specialities"`
-	Level        SkillLevel  `json:"level" gorm:"type:enum('Beginner','Intermediate','Advanced')"`
+	Specialities []string    `json:"specialities" gorm:"type:text[]"`
+	Level        SkillLevel  `json:"level" gorm:"type:skill_level"`
 	UpdatedAt    time.Time   `json:"updated_at"`
 	CreatedAt    time.Time   `json:"created_at"`
 }

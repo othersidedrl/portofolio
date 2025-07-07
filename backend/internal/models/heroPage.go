@@ -15,8 +15,8 @@ type HeroPage struct {
 	Subtitle    string   `json:"subtitle"`
 	ResumeLink  string   `json:"resume_link"`
 	ContactLink string   `json:"contact_link"`
-	ImageURLs   []string `json:"image_urls"`
-	Hobbies     []string `json:"hobbies"`
+	ImageURLs   []string `json:"image_urls" gorm:"type:text[]"`
+	Hobbies     []string `json:"hobbies" gorm:"type:text[]"`
 	UpdatedAt   time.Time `json:"updated_at"`
 	CreatedAt   time.Time `json:"created_at"`
 }

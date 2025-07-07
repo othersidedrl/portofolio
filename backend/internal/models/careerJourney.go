@@ -39,7 +39,7 @@ type CareerJourney struct {
 	Affiliation string     `json:"affiliation"`
 	Description string     `json:"description"`
 	Location    string     `json:"location"`
-	Type        CareerType `json:"type" gorm:"type:enum('Education','Job')"`
+	Type        CareerType `json:"type" gorm:"type:career_type"`
 	UpdatedAt   time.Time `json:"updated_at"`
 	CreatedAt   time.Time `json:"created_at"`
 }
