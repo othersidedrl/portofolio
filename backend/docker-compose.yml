@@ -1,6 +1,6 @@
 services:
   db:
-    image: postgres:15
+    image: postgres:latest
     container_name: portfolio_postgres
     restart: always
     env_file:
