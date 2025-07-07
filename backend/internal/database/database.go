@@ -53,6 +53,7 @@ func ConnectDB() *gorm.DB {
 		&models.Testimony{},
 		&models.ProjectPage{},
 		&models.Project{},
+		&models.User{},
 		// You can add more models here
 	)
 	if err != nil {
