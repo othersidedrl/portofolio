@@ -14,15 +14,17 @@ import (
 func main() {
 	_ = godotenv.Load()
 
-	// Initialize dependencies
+	// Utils
 	jwt := utils.NewJWTService()
+
+	// Auth
 	authService := auth.NewService(jwt)
 	authHandler := auth.NewHandler(authService)
 
 	PORT := os.Getenv("PORT")
 	database.ConnectDB()
 
-	router := server.NewRouter(authHandler)
+	router := server.NewRouter(authHandler, jwt)
 	srv := server.StartServer(":"+PORT, router)
 
 	log.Printf("🚀 Server running on http://localhost:%s", PORT)
