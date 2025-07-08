@@ -4,16 +4,18 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
+	chiMiddleware "github.com/go-chi/chi/v5/middleware"
 	"github.com/othersidedrl/portfolio/backend/internal/auth"
 	"github.com/othersidedrl/portfolio/backend/internal/health"
+	customMiddleware "github.com/othersidedrl/portfolio/backend/internal/middleware"
+	"github.com/othersidedrl/portfolio/backend/internal/utils"
 )
 
-func NewRouter(authHandler *auth.Handler) http.Handler {
+func NewRouter(authHandler *auth.Handler, jwtService *utils.JWTService) http.Handler {
 	r := chi.NewRouter()
 
-	r.Use(middleware.Logger)
-	r.Use(middleware.Recoverer)
+	r.Use(chiMiddleware.Logger)
+	r.Use(chiMiddleware.Recoverer)
 
 	r.Route("/api/v1", func(r chi.Router) {
 		// Health check
@@ -21,6 +23,7 @@ func NewRouter(authHandler *auth.Handler) http.Handler {
 
 		// Auth
 		r.Route("/auth", func(r chi.Router) {
+			r.With(customMiddleware.AuthGuard(jwtService)).Get("/me", authHandler.Me)
 			r.Post("/login", authHandler.Login)
 		})
 	})
