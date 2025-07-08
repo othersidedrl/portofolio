@@ -116,6 +116,7 @@ func (r *GormAboutRepository) GetTechnicalSkills(ctx context.Context) (*Technica
 	var dtoSkills []SkillItemDto
 	for _, skill := range skills {
 		dtoSkills = append(dtoSkills, SkillItemDto{
+			ID:           skill.ID,
 			Name:         skill.Name,
 			Description:  skill.Description,
 			Specialities: skill.Specialities,

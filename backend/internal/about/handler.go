@@ -81,14 +81,9 @@ func (h *Handler) CreateTechnicalSkill(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response := map[string]interface{}{
-		"message": "Successfuly created a skill",
-		"data":    body,
-	}
-
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
+	json.NewEncoder(w).Encode(map[string]string{"message": "Successfuly created a skill"})
 }
 
 func (h *Handler) UpdateTechnicalSkill(w http.ResponseWriter, r *http.Request) {

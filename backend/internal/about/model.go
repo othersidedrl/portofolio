@@ -14,11 +14,12 @@ type AboutPageDto struct {
 }
 
 type SkillItemDto struct {
-	Name         string
-	Description  string
-	Specialities []string
-	Level        string
-	Category     string
+	ID           uint     `json:"id"`
+	Name         string   `json:"name"`
+	Description  string   `json:"description"`
+	Specialities []string `json:"specialities"`
+	Level        string   `json:"level"`
+	Category     string   `json:"category"`
 }
 
 type TechnicalSkillDto struct {
