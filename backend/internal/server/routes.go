@@ -30,7 +30,8 @@ func NewRouter(authHandler *auth.Handler, heroHandler *hero.Handler, jwtService 
 
 		// Pages
 		r.Route("/hero", func(r chi.Router) {
-
+			r.With(customMiddleware.AuthGuard(jwtService)).Patch("/", heroHandler.UpdatePage)
+			r.Get("/", heroHandler.GetPageData)
 		})
 	})
 
