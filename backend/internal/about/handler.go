@@ -18,7 +18,7 @@ func NewHandler(service *Service) *Handler {
 	return &Handler{service}
 }
 
-func (h *Handler) GetPageData(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) GetAboutPageData(w http.ResponseWriter, r *http.Request) {
 	about, err := h.service.Find(r.Context())
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -29,7 +29,7 @@ func (h *Handler) GetPageData(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(about)
 }
 
-func (h *Handler) UpdatePage(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) UpdateAboutPage(w http.ResponseWriter, r *http.Request) {
 	var body AboutPageDto
 
 	if err := utils.DecodeBody(r, &body); err != nil {

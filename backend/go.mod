@@ -15,6 +15,7 @@ require (
 
 require (
 	github.com/creasty/defaults v1.7.0 // indirect
+	github.com/go-chi/cors v1.2.2 // indirect
 	github.com/google/uuid v1.5.0 // indirect
 	github.com/gorilla/schema v1.4.1 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
