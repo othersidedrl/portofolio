@@ -83,7 +83,7 @@ func (r *GormAboutRepository) Update(ctx context.Context, data *AboutPageDto) er
 	existing.Available = data.Available
 
 	// Delete old cards and insert new ones (simplest approach)
-	if err := r.db.WithContext(ctx).Where("about_page_id = ?", existing.ID).Delete(&models.AboutCard{}).Error; err != nil {
+	if err := r.db.WithContext(ctx).Unscoped().Where("about_page_id = ?", existing.ID).Delete(&models.AboutCard{}).Error; err != nil {
 		return err
 	}
 
