@@ -35,26 +35,68 @@ func (r *GormAboutRepository) Find(ctx context.Context) (*AboutPageDto, error) {
 	cards := make([]CardDto, len(about.Cards))
 	for i, c := range about.Cards {
 		cards[i] = CardDto{
-			ID:          c.ID,
 			Title:       c.Title,
 			Description: c.Description,
-			CreatedAt:   c.CreatedAt,
-			UpdatedAt:   c.UpdatedAt,
 		}
 	}
 
 	dto := &AboutPageDto{
-		Description: about.Description,
-		Cards:       cards,
-		GithubLink:  about.GithubLink,
-		Available:   true,
-		CreatedAt:   about.CreatedAt,
-		UpdatedAt:   about.UpdatedAt,
+		Description:  about.Description,
+		Cards:        cards,
+		GithubLink:   about.GithubLink,
+		LinkedinLink: about.LinkedinLink,
+		Available:    about.Available,
 	}
 
 	return dto, nil
 }
 
 func (r *GormAboutRepository) Update(ctx context.Context, data *AboutPageDto) error {
-	return errors.New("")
+	var existing models.AboutPage
+
+	err := r.db.WithContext(ctx).Preload("Cards").First(&existing).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			cards := make([]models.AboutCard, len(data.Cards))
+			for i, c := range cards {
+				cards[i] = models.AboutCard{
+					Title:       c.Title,
+					Description: c.Description,
+				}
+			}
+
+			aboutPage := models.AboutPage{
+				Description:  data.Description,
+				GithubLink:   data.GithubLink,
+				LinkedinLink: data.LinkedinLink,
+				Available:    data.Available,
+				Cards:        cards,
+			}
+			return r.db.WithContext(ctx).Create(&aboutPage).Error
+		}
+		return err
+	}
+
+	existing.Description = data.Description
+	existing.GithubLink = data.GithubLink
+	existing.LinkedinLink = data.LinkedinLink
+	existing.Available = data.Available
+
+	// Delete old cards and insert new ones (simplest approach)
+	if err := r.db.WithContext(ctx).Where("about_page_id = ?", existing.ID).Delete(&models.AboutCard{}).Error; err != nil {
+		return err
+	}
+
+	cards := make([]models.AboutCard, len(data.Cards))
+	for i, c := range data.Cards {
+		cards[i] = models.AboutCard{
+			Title:       c.Title,
+			Description: c.Description,
+		}
+	}
+
+	existing.Cards = cards
+
+	// Save changes
+	return r.db.WithContext(ctx).Save(&existing).Error
 }

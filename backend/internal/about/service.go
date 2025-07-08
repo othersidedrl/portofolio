@@ -13,3 +13,7 @@ func NewService(repo AboutRepository) *Service {
 func (s *Service) Find(ctx context.Context) (*AboutPageDto, error) {
 	return s.repo.Find(ctx)
 }
+
+func (s *Service) Update(ctx context.Context, data AboutPageDto) error {
+	return s.repo.Update(ctx, &data)
+}
