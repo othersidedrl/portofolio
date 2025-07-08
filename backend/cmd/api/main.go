@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
+	"github.com/othersidedrl/portfolio/backend/internal/about"
 	"github.com/othersidedrl/portfolio/backend/internal/auth"
 	"github.com/othersidedrl/portfolio/backend/internal/database"
 	"github.com/othersidedrl/portfolio/backend/internal/hero"
@@ -28,9 +29,14 @@ func main() {
 	heroService := hero.NewService(heroRepo)
 	heroHandler := hero.NewHandler(heroService)
 
+	// About
+	aboutRepo := about.NewGormAboutRepository(db)
+	aboutService := about.NewService(aboutRepo)
+	aboutHandler := about.NewHandler(aboutService)
+
 	PORT := os.Getenv("PORT")
 
-	router := server.NewRouter(authHandler, heroHandler, jwt)
+	router := server.NewRouter(authHandler, heroHandler, aboutHandler, jwt)
 	srv := server.StartServer(":"+PORT, router)
 
 	log.Printf("🚀 Server running on http://localhost:%s", PORT)

@@ -5,6 +5,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	chiMiddleware "github.com/go-chi/chi/v5/middleware"
+	"github.com/othersidedrl/portfolio/backend/internal/about"
 	"github.com/othersidedrl/portfolio/backend/internal/auth"
 	"github.com/othersidedrl/portfolio/backend/internal/health"
 	"github.com/othersidedrl/portfolio/backend/internal/hero"
@@ -12,7 +13,12 @@ import (
 	"github.com/othersidedrl/portfolio/backend/internal/utils"
 )
 
-func NewRouter(authHandler *auth.Handler, heroHandler *hero.Handler, jwtService *utils.JWTService) http.Handler {
+func NewRouter(
+	authHandler *auth.Handler,
+	heroHandler *hero.Handler,
+	aboutHandler *about.Handler,
+	jwtService *utils.JWTService,
+) http.Handler {
 	r := chi.NewRouter()
 
 	r.Use(chiMiddleware.Logger)
@@ -28,10 +34,15 @@ func NewRouter(authHandler *auth.Handler, heroHandler *hero.Handler, jwtService 
 			r.Post("/login", authHandler.Login)
 		})
 
-		// Pages
+		// Hero Section
 		r.Route("/hero", func(r chi.Router) {
 			r.With(customMiddleware.AuthGuard(jwtService)).Patch("/", heroHandler.UpdatePage)
 			r.Get("/", heroHandler.GetPageData)
+		})
+
+		// About Section
+		r.Route("/about", func(r chi.Router) {
+			r.Get("/", aboutHandler.GetPageData)
 		})
 	})
 
