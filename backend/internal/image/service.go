@@ -37,6 +37,14 @@ func (s *Service) Delete(publicID string) error {
 }
 
 // Domain-specific helpers
+func (s *Service) UploadHeroImage(file multipart.File, header *multipart.FileHeader) (*UploadResult, error) {
+	return s.Upload(file, header, &UploadOptions{
+		Folder:  "portfolio/hero",
+		Format:  "webp",
+		Quality: "auto",
+	})
+}
+
 func (s *Service) UploadProjectImage(file multipart.File, header *multipart.FileHeader) (*UploadResult, error) {
 	return s.Upload(file, header, &UploadOptions{
 		Folder:  "portfolio/projects",
