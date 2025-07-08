@@ -8,7 +8,7 @@ import (
 	"github.com/othersidedrl/portofolio/backend/internal/database"
 )
 
-const PORT string = ":8888"
+const PORT string = ":5555"
 
 func main() {
 	err := godotenv.Load()

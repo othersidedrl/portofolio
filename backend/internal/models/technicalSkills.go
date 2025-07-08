@@ -11,9 +11,9 @@ import (
 type SkillLevel string
 
 const (
-	Beginner    SkillLevel = "Beginner"
+	Beginner     SkillLevel = "Beginner"
 	Intermediate SkillLevel = "Intermediate"
-	Advanced    SkillLevel = "Advanced"
+	Advanced     SkillLevel = "Advanced"
 )
 
 // Implement the Scanner interface
@@ -33,11 +33,11 @@ func (sl SkillLevel) Value() (driver.Value, error) {
 
 type TechnicalSkills struct {
 	gorm.Model
-	ID           uint        `json:"id" gorm:"primaryKey"`
-	Name         string      `json:"name"`
-	Description  string      `json:"description"`
-	Specialities []string    `json:"specialities" gorm:"type:text[]"`
-	Level        SkillLevel  `json:"level" gorm:"type:skill_level"`
-	UpdatedAt    time.Time   `json:"updated_at"`
-	CreatedAt    time.Time   `json:"created_at"`
+	ID           uint       `json:"id" gorm:"primaryKey"`
+	Name         string     `json:"name"`
+	Description  string     `json:"description"`
+	Specialities []string   `json:"specialities" gorm:"type:text[]"`
+	Level        SkillLevel `json:"level" gorm:"type:skill_level"`
+	UpdatedAt    time.Time  `json:"updated_at"`
+	CreatedAt    time.Time  `json:"created_at"`
 }

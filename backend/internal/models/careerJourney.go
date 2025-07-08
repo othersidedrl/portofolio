@@ -40,6 +40,6 @@ type CareerJourney struct {
 	Description string     `json:"description"`
 	Location    string     `json:"location"`
 	Type        CareerType `json:"type" gorm:"type:career_type"`
-	UpdatedAt   time.Time `json:"updated_at"`
-	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time  `json:"updated_at"`
+	CreatedAt   time.Time  `json:"created_at"`
 }
