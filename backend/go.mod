@@ -1,4 +1,4 @@
-module github.com/othersidedrl/portofolio/backend
+module github.com/othersidedrl/portfolio/backend
 
 go 1.24.4
 

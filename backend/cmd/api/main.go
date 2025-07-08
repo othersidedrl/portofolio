@@ -5,8 +5,8 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
-	"github.com/othersidedrl/portofolio/backend/internal/database"
-	"github.com/othersidedrl/portofolio/backend/internal/server"
+	"github.com/othersidedrl/portfolio/backend/internal/database"
+	"github.com/othersidedrl/portfolio/backend/internal/server"
 )
 
 func main() {
