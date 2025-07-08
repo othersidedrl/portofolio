@@ -12,3 +12,15 @@ type AboutPageDto struct {
 	LinkedinLink string    `json:"linkedin_link"`
 	Available    bool      `json:"available"`
 }
+
+type SkillItemDto struct {
+	Name         string
+	Description  string
+	Specialities []string
+	Level        string
+	Category     string
+}
+
+type TechnicalSkillDto struct {
+	Skills []SkillItemDto `json:"skills"`
+}
