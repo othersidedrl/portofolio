@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/lib/pq"
 	"gorm.io/gorm"
 )
 
@@ -33,11 +34,11 @@ func (sl SkillLevel) Value() (driver.Value, error) {
 
 type TechnicalSkills struct {
 	gorm.Model
-	ID           uint       `json:"id" gorm:"primaryKey"`
-	Name         string     `json:"name"`
-	Description  string     `json:"description"`
-	Specialities []string   `json:"specialities" gorm:"type:text[]"`
-	Level        SkillLevel `json:"level" gorm:"type:skill_level"`
-	UpdatedAt    time.Time  `json:"updated_at"`
-	CreatedAt    time.Time  `json:"created_at"`
+	ID           uint           `json:"id" gorm:"primaryKey"`
+	Name         string         `json:"name"`
+	Description  string         `json:"description"`
+	Specialities pq.StringArray `json:"specialities" gorm:"type:text[]"`
+	Level        SkillLevel     `json:"level" gorm:"type:skill_level"`
+	UpdatedAt    time.Time      `json:"updated_at"`
+	CreatedAt    time.Time      `json:"created_at"`
 }

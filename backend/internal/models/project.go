@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/lib/pq"
 	"gorm.io/gorm"
 )
 
@@ -53,9 +54,9 @@ type Project struct {
 	gorm.Model
 	ID           uint             `json:"id" gorm:"primaryKey"`
 	Name         string           `json:"name"`
-	ImageUrls    []string         `json:"imageUrls" gorm:"type:text[]"`
+	ImageUrls    pq.StringArray   `json:"imageUrls" gorm:"type:text[]"`
 	Description  string           `json:"description"`
-	TechStack    []string         `json:"techStack" gorm:"type:text[]"`
+	TechStack    pq.StringArray   `json:"techStack" gorm:"type:text[]"`
 	GithubLink   string           `json:"githubLink"`
 	Type         ProjectType      `json:"type" gorm:"type:project_type"`
 	Contribution ContributionType `json:"contribution" gorm:"type:contribution_type"`
