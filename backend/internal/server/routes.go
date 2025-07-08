@@ -1,12 +1,12 @@
 package server
 
 import (
-	"encoding/json"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/othersidedrl/portfolio/backend/internal/auth"
+	"github.com/othersidedrl/portfolio/backend/internal/health"
 )
 
 func NewRouter(authHandler *auth.Handler) http.Handler {
@@ -17,13 +17,12 @@ func NewRouter(authHandler *auth.Handler) http.Handler {
 
 	r.Route("/api/v1", func(r chi.Router) {
 		// Health check
-		r.Get("/health", func(w http.ResponseWriter, r *http.Request) {
-			resp := map[string]string{"status": "ok"}
-			w.Header().Set("Content-Type", "application/json")
-			json.NewEncoder(w).Encode(resp)
-		})
+		r.Get("/health", health.Health)
 
-		r.Post("/login", authHandler.Login)
+		// Auth
+		r.Route("/auth", func(r chi.Router) {
+			r.Post("/login", authHandler.Login)
+		})
 	})
 
 	return r
