@@ -1,6 +1,6 @@
 package hero
 
-type HeroDto struct {
+type HeroPageDto struct {
 	Name        string   `json:"name"`
 	Rank        string   `json:"rank"`
 	Title       string   `json:"title"`
