@@ -24,24 +24,27 @@ func NewRouter(
 	r.Use(chiMiddleware.Logger)
 	r.Use(chiMiddleware.Recoverer)
 
+	authGuard := customMiddleware.AuthGuard(jwtService)
+
 	r.Route("/api/v1", func(r chi.Router) {
 		// Health check
 		r.Get("/health", health.Health)
 
 		// Auth
 		r.Route("/auth", func(r chi.Router) {
-			r.With(customMiddleware.AuthGuard(jwtService)).Get("/me", authHandler.Me)
+			r.With(authGuard).Get("/me", authHandler.Me)
 			r.Post("/login", authHandler.Login)
 		})
 
 		// Hero Section
 		r.Route("/hero", func(r chi.Router) {
-			r.With(customMiddleware.AuthGuard(jwtService)).Patch("/", heroHandler.UpdatePage)
+			r.With(authGuard).Patch("/", heroHandler.UpdatePage)
 			r.Get("/", heroHandler.GetPageData)
 		})
 
 		// About Section
 		r.Route("/about", func(r chi.Router) {
+			r.With(authGuard).Patch("/", aboutHandler.UpdatePage)
 			r.Get("/", aboutHandler.GetPageData)
 		})
 	})
