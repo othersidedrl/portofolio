@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/go-chi/chi/v5"
 	chiMiddleware "github.com/go-chi/chi/v5/middleware"
@@ -65,8 +66,8 @@ func NewRouter(
 	// Standard Chi middleware
 	r.Use(chiMiddleware.Logger)
 	r.Use(chiMiddleware.Recoverer)
-	r.Use(chiMiddleware.Timeout(30)) // 30 second timeout
-	r.Use(chiMiddleware.Compress(5)) // Gzip compression
+	r.Use(chiMiddleware.Timeout(30 * time.Second)) // 30 second timeout
+	r.Use(chiMiddleware.Compress(5))               // Gzip compression
 
 	// Content type validation for API routes
 	r.Use(customMiddleware.ValidateContentType)

@@ -18,6 +18,7 @@ import (
 func main() {
 	_ = godotenv.Load()
 	db := database.ConnectDB()
+	utils.InitRedis()
 
 	// Utils
 	jwt := utils.NewJWTService()
