@@ -35,16 +35,13 @@ func NewRouter(
 	var allowedOrigins []string
 	if allowedOriginsEnv != "" {
 		allowedOrigins = strings.Split(allowedOriginsEnv, ",")
-		// Trim whitespace
 		for i, origin := range allowedOrigins {
 			allowedOrigins[i] = strings.TrimSpace(origin)
 		}
 	} else {
-		// Development fallback
 		allowedOrigins = []string{"http://localhost:3000"}
 	}
 
-	// Security middleware (applied to all routes)
 	r.Use(customMiddleware.SecurityHeaders)
 	r.Use(customMiddleware.RequestSizeLimit(10 << 20)) // 10MB limit
 	r.Use(customMiddleware.SanitizeInput)
@@ -53,21 +50,21 @@ func NewRouter(
 	rateLimiter := customMiddleware.NewRateLimiter(60)
 	r.Use(rateLimiter.Handler)
 
-	// CORS configuration with security
+	// CORS
 	r.Use(cors.Handler(cors.Options{
 		AllowedOrigins:   allowedOrigins,
 		AllowedMethods:   []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
 		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token", "X-Requested-With"},
 		ExposedHeaders:   []string{"Link"},
 		AllowCredentials: true,
-		MaxAge:           300, // cache preflight response for 5 mins
+		MaxAge:           300, // 5 mins
 	}))
 
 	// Standard Chi middleware
 	r.Use(chiMiddleware.Logger)
 	r.Use(chiMiddleware.Recoverer)
-	r.Use(chiMiddleware.Timeout(30 * time.Second)) // 30 second timeout
-	r.Use(chiMiddleware.Compress(5))               // Gzip compression
+	r.Use(chiMiddleware.Timeout(30 * time.Second))
+	r.Use(chiMiddleware.Compress(5))
 
 	// Content type validation for API routes
 	r.Use(customMiddleware.ValidateContentType)
@@ -75,44 +72,47 @@ func NewRouter(
 	// Auth middleware
 	authGuard := customMiddleware.AuthGuard(jwtService)
 
+	// Redis
+	redis := utils.RedisClient
+	// Cache TTLs
+	pageTTL := time.Hour
+	sectionTTL := 30 * time.Minute
+
 	r.Route("/api/v1", func(r chi.Router) {
-		// Health check (no auth required)
 		r.Get("/health", health.Health)
 
-		// Public routes with rate limiting
+		// Public
 		r.Group(func(r chi.Router) {
-			// Additional rate limiting for public endpoints
 			publicRateLimiter := customMiddleware.NewRateLimiter(30) // 30 requests per minute for public
 			r.Use(publicRateLimiter.Handler)
 
-			// Hero Section (public read)
-			r.Get("/hero", heroHandler.GetHeroPage)
+			// Hero Section (public)
+			r.Get("/hero", customMiddleware.RedisCache(redis, "hero_page_cache", pageTTL, heroHandler.GetHeroPage))
 
-			// About Section (public read)
-			r.Get("/about", aboutHandler.GetAboutPage)
-			r.Get("/about/skills", aboutHandler.GetTechnicalSkills)
-			r.Get("/about/careers", aboutHandler.GetCareers)
+			// About Section (public)
+			r.Get("/about", customMiddleware.RedisCache(redis, "about_page_cache", pageTTL, aboutHandler.GetAboutPage))
+			r.Get("/about/skills", customMiddleware.RedisCache(redis, "about_skills_cache", sectionTTL, aboutHandler.GetTechnicalSkills))
+			r.Get("/about/careers", customMiddleware.RedisCache(redis, "about_careers_cache", sectionTTL, aboutHandler.GetCareers))
 
-			// Testimonies (public read)
-			r.Get("/testimony", testimonyHandler.GetTestimonyPage)
-			r.Get("/testimony/items/approved", testimonyHandler.GetApprovedTestimonies)
+			// Testimonies (public)
+			r.Get("/testimony", customMiddleware.RedisCache(redis, "testimony_page_cache", pageTTL, testimonyHandler.GetTestimonyPage))
+			r.Get("/testimony/items/approved", customMiddleware.RedisCache(redis, "testimony_approved_cache", sectionTTL, testimonyHandler.GetApprovedTestimonies))
 
-			// Projects (public read)
-			r.Get("/project", projectHandler.GetProjectPage)
-			r.Get("/project/items", projectHandler.GetProjects)
+			// Projects (public)
+			r.Get("/project", customMiddleware.RedisCache(redis, "project_page_cache", pageTTL, projectHandler.GetProjectPage))
+			r.Get("/project/items", customMiddleware.RedisCache(redis, "project_items_cache", sectionTTL, projectHandler.GetProjects))
 		})
 
-		// Auth routes with stricter rate limiting
+		// Auth
 		r.Route("/auth", func(r chi.Router) {
-			// Very strict rate limiting for auth endpoints
-			authRateLimiter := customMiddleware.NewRateLimiter(5) // 5 requests per minute
+			authRateLimiter := customMiddleware.NewRateLimiter(5)
 			r.Use(authRateLimiter.Handler)
 
 			r.Post("/login", authHandler.Login)
 			r.With(authGuard).Get("/me", authHandler.Me)
 		})
 
-		// Protected admin routes
+		// Admin
 		r.Route("/admin", func(r chi.Router) {
 			r.Use(authGuard)
 			r.Use(customMiddleware.NoCache) // Prevent caching of admin data
@@ -120,55 +120,55 @@ func NewRouter(
 			// Hero Section (admin)
 			r.Route("/hero", func(r chi.Router) {
 				r.Get("/", heroHandler.GetHeroPage)
-				r.Patch("/", heroHandler.UpdateHeroPage)
+				r.Patch("/", customMiddleware.RemoveCache(redis, "hero_page_cache", heroHandler.UpdateHeroPage))
 			})
 
 			// About Section (admin)
 			r.Route("/about", func(r chi.Router) {
 				r.Get("/", aboutHandler.GetAboutPage)
-				r.Patch("/", aboutHandler.UpdateAboutPage)
+				r.Patch("/", customMiddleware.RemoveCache(redis, "about_page_cache", aboutHandler.UpdateAboutPage))
 
 				// About Skills (admin)
 				r.Route("/skills", func(r chi.Router) {
 					r.Get("/", aboutHandler.GetTechnicalSkills)
-					r.Post("/", aboutHandler.CreateTechnicalSkill)
-					r.Patch("/{id}", aboutHandler.UpdateTechnicalSkill)
-					r.Delete("/{id}", aboutHandler.DeleteTechnicalSkill)
+					r.Post("/", customMiddleware.RemoveCache(redis, "about_skills_cache", aboutHandler.CreateTechnicalSkill))
+					r.Patch("/{id}", customMiddleware.RemoveCache(redis, "about_skills_cache", aboutHandler.UpdateTechnicalSkill))
+					r.Delete("/{id}", customMiddleware.RemoveCache(redis, "about_skills_cache", aboutHandler.DeleteTechnicalSkill))
 				})
 
 				// About Careers (admin)
 				r.Route("/careers", func(r chi.Router) {
 					r.Get("/", aboutHandler.GetCareers)
-					r.Post("/", aboutHandler.CreateCareer)
-					r.Patch("/{id}", aboutHandler.UpdateCareer)
-					r.Delete("/{id}", aboutHandler.DeleteCareer)
+					r.Post("/", customMiddleware.RemoveCache(redis, "about_careers_cache", aboutHandler.CreateCareer))
+					r.Patch("/{id}", customMiddleware.RemoveCache(redis, "about_careers_cache", aboutHandler.UpdateCareer))
+					r.Delete("/{id}", customMiddleware.RemoveCache(redis, "about_careers_cache", aboutHandler.DeleteCareer))
 				})
 			})
 
 			// Testimonies (admin)
 			r.Route("/testimony", func(r chi.Router) {
 				r.Get("/", testimonyHandler.GetTestimonyPage)
-				r.Patch("/", testimonyHandler.UpdateTestimonyPage)
+				r.Patch("/", customMiddleware.RemoveCache(redis, "testimony_page_cache", testimonyHandler.UpdateTestimonyPage))
 
 				r.Route("/items", func(r chi.Router) {
 					r.Get("/", testimonyHandler.GetTestimonies)
-					r.Post("/", testimonyHandler.CreateTestimony)
-					r.Patch("/{id}", testimonyHandler.UpdateTestimony)
-					r.Patch("/{id}/approve", testimonyHandler.ApproveTestimony)
-					r.Delete("/{id}", testimonyHandler.DeleteTestimony)
+					r.Post("/", customMiddleware.RemoveCache(redis, "testimony_approved_cache", testimonyHandler.CreateTestimony))
+					r.Patch("/{id}", customMiddleware.RemoveCache(redis, "testimony_approved_cache", testimonyHandler.UpdateTestimony))
+					r.Patch("/{id}/approve", customMiddleware.RemoveCache(redis, "testimony_approved_cache", testimonyHandler.ApproveTestimony))
+					r.Delete("/{id}", customMiddleware.RemoveCache(redis, "testimony_approved_cache", testimonyHandler.DeleteTestimony))
 				})
 			})
 
 			// Projects (admin)
 			r.Route("/project", func(r chi.Router) {
 				r.Get("/", projectHandler.GetProjectPage)
-				r.Patch("/", projectHandler.UpdateProjectPage)
+				r.Patch("/", customMiddleware.RemoveCache(redis, "cache:/api/v1/project", projectHandler.UpdateProjectPage))
 
 				r.Route("/items", func(r chi.Router) {
 					r.Get("/", projectHandler.GetProjects)
-					r.Post("/", projectHandler.CreateProject)
-					r.Patch("/{id}", projectHandler.UpdateProject)
-					r.Delete("/{id}", projectHandler.DeleteProject)
+					r.Post("/", customMiddleware.RemoveCache(redis, "cache:/api/v1/project/items", projectHandler.CreateProject))
+					r.Patch("/{id}", customMiddleware.RemoveCache(redis, "cache:/api/v1/project/items", projectHandler.UpdateProject))
+					r.Delete("/{id}", customMiddleware.RemoveCache(redis, "cache:/api/v1/project/items", projectHandler.DeleteProject))
 				})
 			})
 		})
