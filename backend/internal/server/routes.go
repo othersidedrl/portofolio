@@ -11,6 +11,7 @@ import (
 	"github.com/othersidedrl/portfolio/backend/internal/health"
 	"github.com/othersidedrl/portfolio/backend/internal/hero"
 	customMiddleware "github.com/othersidedrl/portfolio/backend/internal/middleware"
+	"github.com/othersidedrl/portfolio/backend/internal/project"
 	"github.com/othersidedrl/portfolio/backend/internal/testimony"
 	"github.com/othersidedrl/portfolio/backend/internal/utils"
 )
@@ -20,6 +21,7 @@ func NewRouter(
 	heroHandler *hero.Handler,
 	aboutHandler *about.Handler,
 	testimonyHandler *testimony.Handler,
+	projectHandler *project.Handler,
 	jwtService *utils.JWTService,
 ) http.Handler {
 	r := chi.NewRouter()
@@ -87,6 +89,19 @@ func NewRouter(
 				r.With(authGuard).Patch("/{id}", testimonyHandler.UpdateTestimony)
 				r.With(authGuard).Patch("/{id}/approve", testimonyHandler.ApproveTestimony)
 				r.With(authGuard).Delete("/{id}", testimonyHandler.DeleteTestimony)
+			})
+		})
+
+		// Project
+		r.Route("/project", func(r chi.Router) {
+			r.Get("/", projectHandler.GetProjectPage)
+			r.With(authGuard).Patch("/", projectHandler.UpdateProjectPage)
+
+			r.Route("/items", func(r chi.Router) {
+				r.Get("/", projectHandler.GetProjects)
+				r.With(authGuard).Post("/", projectHandler.CreateProject)
+				r.With(authGuard).Patch("/{id}", projectHandler.UpdateProject)
+				r.With(authGuard).Delete("/{id}", projectHandler.DeleteProject)
 			})
 		})
 	})

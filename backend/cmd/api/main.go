@@ -9,6 +9,7 @@ import (
 	"github.com/othersidedrl/portfolio/backend/internal/auth"
 	"github.com/othersidedrl/portfolio/backend/internal/database"
 	"github.com/othersidedrl/portfolio/backend/internal/hero"
+	"github.com/othersidedrl/portfolio/backend/internal/project"
 	"github.com/othersidedrl/portfolio/backend/internal/server"
 	"github.com/othersidedrl/portfolio/backend/internal/testimony"
 	"github.com/othersidedrl/portfolio/backend/internal/utils"
@@ -40,9 +41,14 @@ func main() {
 	testimonyService := testimony.NewService(testimonyRepo)
 	testimonyHandler := testimony.NewHandler(testimonyService)
 
+	// Project
+	projectRepo := project.NewGormProjectRepository(db)
+	projectService := project.NewService(projectRepo)
+	projectHandler := project.NewHandler(projectService)
+
 	PORT := os.Getenv("PORT")
 
-	router := server.NewRouter(authHandler, heroHandler, aboutHandler, testimonyHandler, jwt)
+	router := server.NewRouter(authHandler, heroHandler, aboutHandler, testimonyHandler, projectHandler, jwt)
 	srv := server.StartServer(":"+PORT, router)
 
 	log.Printf("🚀 Server running on http://localhost:%s", PORT)
