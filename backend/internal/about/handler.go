@@ -18,7 +18,7 @@ func NewHandler(service *Service) *Handler {
 	return &Handler{service}
 }
 
-func (h *Handler) GetAboutPageData(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) GetAboutPage(w http.ResponseWriter, r *http.Request) {
 	about, err := h.service.Find(r.Context())
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

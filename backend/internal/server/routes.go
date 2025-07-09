@@ -50,13 +50,13 @@ func NewRouter(
 
 		// Hero Section
 		r.Route("/hero", func(r chi.Router) {
-			r.Get("/", heroHandler.GetHeroPageData)
+			r.Get("/", heroHandler.GetHeroPage)
 			r.With(authGuard).Patch("/", heroHandler.UpdateHeroPage)
 		})
 
 		// About Section
 		r.Route("/about", func(r chi.Router) {
-			r.Get("/", aboutHandler.GetAboutPageData)
+			r.Get("/", aboutHandler.GetAboutPage)
 			r.With(authGuard).Patch("/", aboutHandler.UpdateAboutPage)
 
 			// About Skills
@@ -73,6 +73,20 @@ func NewRouter(
 				r.With(authGuard).Patch("/{id}", aboutHandler.UpdateCareer)
 				r.With(authGuard).Delete("/{id}", aboutHandler.DeleteCareer)
 			})
+		})
+
+		// Testimonies
+		r.Route("/testimony", func(r chi.Router) {
+			r.Get("/", testimonyHandler.GetTestimonyPage)
+			r.With(authGuard).Patch("/", testimonyHandler.UpdateTestimonyPage)
+
+			r.Route("/items", func(r chi.Router) {
+				r.Get("/", testimonyHandler.GetTestimonies)
+				r.With(authGuard).Post("/", testimonyHandler.CreateTestimony)
+				r.With(authGuard).Patch("/{id}", testimonyHandler.UpdateTestimony)
+				r.With(authGuard).Delete("/{id}", testimonyHandler.DeleteTestimony)
+			})
+
 		})
 	})
 

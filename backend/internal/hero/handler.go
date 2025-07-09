@@ -15,7 +15,7 @@ func NewHandler(service *Service) *Handler {
 	return &Handler{service}
 }
 
-func (h *Handler) GetHeroPageData(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) GetHeroPage(w http.ResponseWriter, r *http.Request) {
 	hero, err := h.service.Find(r.Context())
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
