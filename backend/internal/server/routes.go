@@ -82,8 +82,10 @@ func NewRouter(
 
 			r.Route("/items", func(r chi.Router) {
 				r.Get("/", testimonyHandler.GetTestimonies)
+				r.Get("/approved", testimonyHandler.GetApprovedTestimonies)
 				r.With(authGuard).Post("/", testimonyHandler.CreateTestimony)
 				r.With(authGuard).Patch("/{id}", testimonyHandler.UpdateTestimony)
+				r.With(authGuard).Patch("/{id}/approve", testimonyHandler.ApproveTestimony)
 				r.With(authGuard).Delete("/{id}", testimonyHandler.DeleteTestimony)
 			})
 		})

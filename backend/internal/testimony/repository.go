@@ -12,8 +12,10 @@ type TestimonyRepository interface {
 	GetTestimonyPage(ctx context.Context) (*TestimonyPageDto, error)
 	UpdateTestimonyPage(ctx context.Context, data *TestimonyPageDto) error
 	GetTestimonies(ctx context.Context) (*TestimonyDto, error)
+	GetApprovedTestimonies(ctx context.Context) (*TestimonyDto, error)
 	CreateTestimony(ctx context.Context, data *TestimonyItemDto) error
 	UpdateTestimony(ctx context.Context, data *TestimonyItemDto, id uint) error
+	ApproveTestimony(ctx context.Context, data *ApproveTestimonyDto, id uint) error
 	DeleteTestimony(ctx context.Context, id uint) error
 }
 
@@ -67,6 +69,28 @@ func (r *GormTestimonyRepository) GetTestimonies(ctx context.Context) (*Testimon
 			Rating:      t.Rating,
 			Description: t.Description,
 			AISummary:   t.AISummary,
+			Approved:    t.Approved,
+		})
+	}
+	return &TestimonyDto{Testimonies: dtoTestimonies}, nil
+}
+
+func (r *GormTestimonyRepository) GetApprovedTestimonies(ctx context.Context) (*TestimonyDto, error) {
+	var testimonies []models.Testimony
+	if err := r.db.WithContext(ctx).Where("approved = ?", true).Find(&testimonies).Error; err != nil {
+		return nil, err
+	}
+	var dtoTestimonies []TestimonyItemDto
+	for _, t := range testimonies {
+		dtoTestimonies = append(dtoTestimonies, TestimonyItemDto{
+			ID:          int(t.ID),
+			Name:        t.Name,
+			ProfileUrl:  t.ProfileUrl,
+			Affiliation: t.Affiliation,
+			Rating:      t.Rating,
+			Description: t.Description,
+			AISummary:   t.AISummary,
+			Approved:    t.Approved,
 		})
 	}
 	return &TestimonyDto{Testimonies: dtoTestimonies}, nil
@@ -80,6 +104,7 @@ func (r *GormTestimonyRepository) CreateTestimony(ctx context.Context, data *Tes
 		Rating:      data.Rating,
 		Description: data.Description,
 		AISummary:   data.AISummary,
+		Approved:    false,
 	}
 	return r.db.WithContext(ctx).Create(&testimony).Error
 }
@@ -92,7 +117,12 @@ func (r *GormTestimonyRepository) UpdateTestimony(ctx context.Context, data *Tes
 		Rating:      data.Rating,
 		Description: data.Description,
 		AISummary:   data.AISummary,
+		Approved:    data.Approved,
 	}).Error
+}
+
+func (r *GormTestimonyRepository) ApproveTestimony(ctx context.Context, data *ApproveTestimonyDto, id uint) error {
+	return r.db.WithContext(ctx).Model(&models.Testimony{}).Where("id = ?", id).Update("approved", data.Approved).Error
 }
 
 func (r *GormTestimonyRepository) DeleteTestimony(ctx context.Context, id uint) error {

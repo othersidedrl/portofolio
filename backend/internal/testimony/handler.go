@@ -60,6 +60,24 @@ func (h *Handler) GetTestimonies(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(response)
 }
 
+func (h *Handler) GetApprovedTestimonies(w http.ResponseWriter, r *http.Request) {
+	testimonies, err := h.service.GetApprovedTestimonies(r.Context())
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	if testimonies == nil {
+		testimonies = &TestimonyDto{Testimonies: []TestimonyItemDto{}}
+	}
+	response := map[string]interface{}{
+		"length": len(testimonies.Testimonies),
+		"data":   testimonies.Testimonies,
+	}
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(response)
+}
+
 func (h *Handler) CreateTestimony(w http.ResponseWriter, r *http.Request) {
 	var body TestimonyItemDto
 	if err := utils.DecodeBody(r, &body); err != nil {
@@ -93,6 +111,25 @@ func (h *Handler) UpdateTestimony(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]string{"message": "Testimony updated"})
+}
+
+func (h *Handler) ApproveTestimony(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.Atoi(chi.URLParam(r, "id"))
+	if err != nil {
+		http.Error(w, "Invalid testimony ID", http.StatusBadRequest)
+		return
+	}
+	var body ApproveTestimonyDto
+	if err := utils.DecodeBody(r, &body); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	if err := h.service.ApproveTestimony(r.Context(), &body, uint(id)); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.WriteHeader(http.StatusNoContent)
+	w.Header().Set("Content-Type", "application/json")
 }
 
 func (h *Handler) DeleteTestimony(w http.ResponseWriter, r *http.Request) {

@@ -13,8 +13,13 @@ type TestimonyItemDto struct {
 	Rating      int    `json:"rating"`
 	Description string `json:"description"`
 	AISummary   string `json:"aiSummary"`
+	Approved    bool   `json:"approved"`
 }
 
 type TestimonyDto struct {
 	Testimonies []TestimonyItemDto `json:"testimonies"`
+}
+
+type ApproveTestimonyDto struct {
+	Approved bool `json:"approved"`
 }

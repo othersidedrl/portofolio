@@ -15,6 +15,7 @@ type Testimony struct {
 	Rating      int       `json:"rating"`
 	Description string    `json:"description"`
 	AISummary   string    `json:"ai_summary"`
+	Approved    bool      `json:"approved"`
 	UpdatedAt   time.Time `json:"updated_at"`
 	CreatedAt   time.Time `json:"created_at"`
 }

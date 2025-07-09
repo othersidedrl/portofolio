@@ -30,6 +30,10 @@ func (s *Service) GetTestimonies(ctx context.Context) (*TestimonyDto, error) {
 	return s.repo.GetTestimonies(ctx)
 }
 
+func (s *Service) GetApprovedTestimonies(ctx context.Context) (*TestimonyDto, error) {
+	return s.repo.GetApprovedTestimonies(ctx)
+}
+
 func (s *Service) CreateTestimony(ctx context.Context, data *TestimonyItemDto) error {
 	prompt := fmt.Sprintf("You are an assistant summarizing a professional testimonial for a portfolio website. Keep it under 25 words, professional and positive in tone. Emphasize strengths like reliability, problem-solving, or collaboration. Do not quote the original, repeat minor details, or mention names. Return a single sentence with no prefix. Input:'%s'", data.Description)
 
@@ -89,6 +93,10 @@ func (s *Service) CreateTestimony(ctx context.Context, data *TestimonyItemDto) e
 
 func (s *Service) UpdateTestimony(ctx context.Context, data *TestimonyItemDto, id uint) error {
 	return s.repo.UpdateTestimony(ctx, data, id)
+}
+
+func (s *Service) ApproveTestimony(ctx context.Context, data *ApproveTestimonyDto, id uint) error {
+	return s.repo.ApproveTestimony(ctx, data, id)
 }
 
 func (s *Service) DeleteTestimony(ctx context.Context, id uint) error {
