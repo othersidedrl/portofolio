@@ -64,6 +64,13 @@ func NewRouter(
 				r.With(authGuard).Patch("/{id}", aboutHandler.UpdateTechnicalSkill)
 				r.With(authGuard).Delete("/{id}", aboutHandler.DeleteTechnicalSkill)
 			})
+
+			r.Route("/careers", func(r chi.Router) {
+				r.Get("/", aboutHandler.GetCareers)
+				r.With(authGuard).Post("/", aboutHandler.CreateCareer)
+				r.With(authGuard).Patch("/{id}", aboutHandler.UpdateCareer)
+				r.With(authGuard).Delete("/{id}", aboutHandler.DeleteCareer)
+			})
 		})
 	})
 
