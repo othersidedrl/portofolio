@@ -86,7 +86,6 @@ func NewRouter(
 				r.With(authGuard).Patch("/{id}", testimonyHandler.UpdateTestimony)
 				r.With(authGuard).Delete("/{id}", testimonyHandler.DeleteTestimony)
 			})
-
 		})
 	})
 
