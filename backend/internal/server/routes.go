@@ -74,11 +74,6 @@ func NewRouter(
 	// Auth middleware
 	authGuard := customMiddleware.AuthGuard(jwtService)
 
-	// Enhanced auth guard with additional security
-	secureAuthGuard := func(next http.Handler) http.Handler {
-		return customMiddleware.ValidateAuthHeader(authGuard(next))
-	}
-
 	r.Route("/api/v1", func(r chi.Router) {
 		// Health check (no auth required)
 		r.Get("/health", health.Health)
@@ -113,12 +108,12 @@ func NewRouter(
 			r.Use(authRateLimiter.Handler)
 
 			r.Post("/login", authHandler.Login)
-			r.With(secureAuthGuard).Get("/me", authHandler.Me)
+			r.With(authGuard).Get("/me", authHandler.Me)
 		})
 
 		// Protected admin routes
 		r.Route("/admin", func(r chi.Router) {
-			r.Use(secureAuthGuard)
+			r.Use(authGuard)
 			r.Use(customMiddleware.NoCache) // Prevent caching of admin data
 
 			// Hero Section (admin)

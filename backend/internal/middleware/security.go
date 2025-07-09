@@ -172,28 +172,6 @@ func SanitizeInput(next http.Handler) http.Handler {
 	})
 }
 
-// ValidateAuthHeader validates Authorization header format
-func ValidateAuthHeader(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		authHeader := r.Header.Get("Authorization")
-		if authHeader != "" {
-			// Basic validation for Bearer token format
-			if !strings.HasPrefix(authHeader, "Bearer ") {
-				http.Error(w, "Invalid authorization header format", http.StatusUnauthorized)
-				return
-			}
-
-			token := strings.TrimPrefix(authHeader, "Bearer ")
-			if len(token) == 0 {
-				http.Error(w, "Token cannot be empty", http.StatusUnauthorized)
-				return
-			}
-		}
-
-		next.ServeHTTP(w, r)
-	})
-}
-
 // NoCache sets headers to prevent caching
 func NoCache(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
