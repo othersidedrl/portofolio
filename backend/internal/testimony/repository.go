@@ -8,8 +8,8 @@ import (
 )
 
 type TestimonyRepository interface {
-	Find(ctx context.Context) (*TestimonyPageDto, error)
-	Update(ctx context.Context, data *TestimonyPageDto) error
+	GetTestimonyPage(ctx context.Context) (*TestimonyPageDto, error)
+	UpdateTestimonyPage(ctx context.Context, data *TestimonyPageDto) error
 	GetTestimonies(ctx context.Context) (*TestimonyDto, error)
 	CreateTestimony(ctx context.Context, data *TestimonyItemDto) error
 	UpdateTestimony(ctx context.Context, data *TestimonyItemDto, id uint) error
@@ -24,10 +24,10 @@ func NewGormTestimonyRepository(db *gorm.DB) *GormTestimonyRepository {
 	return &GormTestimonyRepository{db: db}
 }
 
-func (r *GormTestimonyRepository) Find(ctx context.Context) (*TestimonyPageDto, error) {
+func (r *GormTestimonyRepository) GetTestimonyPage(ctx context.Context) (*TestimonyPageDto, error) {
 	return nil, errors.New("")
 }
-func (r *GormTestimonyRepository) Update(ctx context.Context, data *TestimonyPageDto) error {
+func (r *GormTestimonyRepository) UpdateTestimonyPage(ctx context.Context, data *TestimonyPageDto) error {
 	return errors.New("")
 }
 func (r *GormTestimonyRepository) GetTestimonies(ctx context.Context) (*TestimonyDto, error) {

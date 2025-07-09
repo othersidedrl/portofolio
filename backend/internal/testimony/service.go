@@ -8,9 +8,9 @@ func NewService(repo TestimonyRepository) *Service {
 	return &Service{repo}
 }
 
-func (s *Service) Find()            {}
-func (s *Service) Update()          {}
-func (s *Service) GetTestimonies()  {}
-func (s *Service) CreateTestimony() {}
-func (s *Service) UpdateTestimony() {}
-func (s *Service) DeleteTestimony() {}
+func (s *Service) GetTestimonyPage()    {}
+func (s *Service) UpdateTestimonyPage() {}
+func (s *Service) GetTestimonies()      {}
+func (s *Service) CreateTestimony()     {}
+func (s *Service) UpdateTestimony()     {}
+func (s *Service) DeleteTestimony()     {}
