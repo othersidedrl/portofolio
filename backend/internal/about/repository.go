@@ -13,8 +13,12 @@ type AboutRepository interface {
 	Update(ctx context.Context, data *AboutPageDto) error
 	GetTechnicalSkills(ctx context.Context) (*TechnicalSkillDto, error)
 	CreateTechnicalSkill(ctx context.Context, data *SkillItemDto) error
-	UpdateTechnicalSkill(ctx context.Context, data *SkillItemDto, id int) error
-	DeleteTechnicalSkill(ctx context.Context, id int) error
+	UpdateTechnicalSkill(ctx context.Context, data *SkillItemDto, id uint) error
+	DeleteTechnicalSkill(ctx context.Context, id uint) error
+	GetCareers(ctx context.Context) (*CareerJourneyDto, error)
+	CreateCareer(ctx context.Context, data *CareerItemDto) error
+	UpdateCareer(ctx context.Context, data *CareerItemDto, id uint) error
+	DeleteCareer(ctx context.Context, id uint) error
 }
 
 type GormAboutRepository struct {
@@ -142,7 +146,7 @@ func (r *GormAboutRepository) CreateTechnicalSkill(ctx context.Context, data *Sk
 	return r.db.WithContext(ctx).Create(&skill).Error
 }
 
-func (r *GormAboutRepository) UpdateTechnicalSkill(ctx context.Context, data *SkillItemDto, id int) error {
+func (r *GormAboutRepository) UpdateTechnicalSkill(ctx context.Context, data *SkillItemDto, id uint) error {
 	return r.db.WithContext(ctx).Where("id = ?", id).Updates(
 		models.TechnicalSkills{
 			Name:         data.Name,
@@ -153,6 +157,60 @@ func (r *GormAboutRepository) UpdateTechnicalSkill(ctx context.Context, data *Sk
 		}).Error
 }
 
-func (r *GormAboutRepository) DeleteTechnicalSkill(ctx context.Context, id int) error {
+func (r *GormAboutRepository) DeleteTechnicalSkill(ctx context.Context, id uint) error {
 	return r.db.WithContext(ctx).Where("id = ?", id).Unscoped().Delete(&models.TechnicalSkills{}).Error
+}
+
+func (r *GormAboutRepository) GetCareers(ctx context.Context) (*CareerJourneyDto, error) {
+	var careers []models.CareerJourney
+
+	if err := r.db.WithContext(ctx).Find(&careers).Error; err != nil {
+		return nil, err
+	}
+
+	var dtoCareers []CareerItemDto
+	for _, career := range careers {
+		dtoCareers = append(dtoCareers, CareerItemDto{
+			ID:          career.ID,
+			Title:       career.Title,
+			Description: career.Description,
+			Affiliation: career.Affiliation,
+			Location:    career.Location,
+			Type:        string(career.Type),
+			StartedAt:   career.StartedAt,
+			EndedAt:     career.EndedAt,
+		})
+	}
+
+	return &CareerJourneyDto{
+		Careers: dtoCareers,
+	}, nil
+}
+
+func (r *GormAboutRepository) CreateCareer(ctx context.Context, data *CareerItemDto) error {
+	return r.db.WithContext(ctx).Create(&models.CareerJourney{
+		Title:       data.Title,
+		Description: data.Description,
+		Affiliation: data.Affiliation,
+		Location:    data.Location,
+		Type:        models.CareerType(data.Type),
+		StartedAt:   data.StartedAt,
+		EndedAt:     data.EndedAt,
+	}).Error
+}
+
+func (r *GormAboutRepository) UpdateCareer(ctx context.Context, data *CareerItemDto, id uint) error {
+	return r.db.WithContext(ctx).Where("id = ?", id).Updates(&models.CareerJourney{
+		Title:       data.Title,
+		Description: data.Description,
+		Affiliation: data.Affiliation,
+		Location:    data.Location,
+		Type:        models.CareerType(data.Type),
+		StartedAt:   data.StartedAt,
+		EndedAt:     data.EndedAt,
+	}).Error
+}
+
+func (r *GormAboutRepository) DeleteCareer(ctx context.Context, id uint) error {
+	return r.db.WithContext(ctx).Where("id = ?", id).Unscoped().Delete(&models.CareerJourney{}).Error
 }

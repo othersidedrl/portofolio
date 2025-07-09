@@ -100,12 +100,12 @@ func (h *Handler) UpdateTechnicalSkill(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := h.service.UpdateTechnicalSkill(r.Context(), body, id); err != nil {
+	if err := h.service.UpdateTechnicalSkill(r.Context(), body, uint(id)); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	log.Printf("✅ Skill %d updated successfully", id)
+	log.Printf("Skill %d updated successfully", id)
 
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
@@ -119,12 +119,96 @@ func (h *Handler) DeleteTechnicalSkill(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := h.service.DeleteTechnicalSkill(r.Context(), id); err != nil {
+	if err := h.service.DeleteTechnicalSkill(r.Context(), uint(id)); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	log.Printf("✅ Skill %d deleted successfully", id)
+	log.Printf("Skill %d deleted successfully", id)
+
+	w.WriteHeader(http.StatusNoContent)
+	w.Header().Set("Content-Type", "application/json")
+}
+
+func (h *Handler) GetCareers(w http.ResponseWriter, r *http.Request) {
+	careerJourney, err := h.service.GetCareers(r.Context())
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	careers := []CareerItemDto{}
+	if careerJourney != nil {
+		careers = careerJourney.Careers
+	}
+
+	response := map[string]interface{}{
+		"length": len(careers),
+		"data":   careers,
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(response)
+}
+
+func (h *Handler) CreateCareer(w http.ResponseWriter, r *http.Request) {
+	var body CareerItemDto
+
+	if err := utils.DecodeBody(r, &body); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	if err := h.service.CreateCareer(r.Context(), body); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusCreated)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{"message": "Successfully created a career"})
+}
+
+func (h *Handler) UpdateCareer(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.Atoi(chi.URLParam(r, "id"))
+	if err != nil {
+		http.Error(w, "Invalid career ID", http.StatusBadRequest)
+		return
+	}
+
+	var body CareerItemDto
+
+	if err := utils.DecodeBody(r, &body); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	if err := h.service.UpdateCareer(r.Context(), body, uint(id)); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	log.Printf("Career %d updated successfully", id)
+
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{"message": "Career updated"})
+}
+
+func (h *Handler) DeleteCareer(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.Atoi(chi.URLParam(r, "id"))
+	if err != nil {
+		http.Error(w, "Invalid career ID", http.StatusBadRequest)
+		return
+	}
+
+	if err := h.service.DeleteCareer(r.Context(), uint(id)); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	log.Printf("Career %d deleted successfully", id)
 
 	w.WriteHeader(http.StatusNoContent)
 	w.Header().Set("Content-Type", "application/json")

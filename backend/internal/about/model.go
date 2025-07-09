@@ -25,3 +25,18 @@ type SkillItemDto struct {
 type TechnicalSkillDto struct {
 	Skills []SkillItemDto `json:"skills"`
 }
+
+type CareerItemDto struct {
+	ID          uint   `json:"id"`
+	Title       string `json:"title"`
+	Affiliation string `json:"affiliation"`
+	Description string `json:"description"`
+	Location    string `json:"location"`
+	Type        string `json:"type"`
+	StartedAt   string `json:"started_at"`
+	EndedAt     string `json:"ended_at"`
+}
+
+type CareerJourneyDto struct {
+	Careers []CareerItemDto `json:"career"`
+}
