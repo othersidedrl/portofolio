@@ -11,6 +11,7 @@ import (
 	"github.com/othersidedrl/portfolio/backend/internal/health"
 	"github.com/othersidedrl/portfolio/backend/internal/hero"
 	customMiddleware "github.com/othersidedrl/portfolio/backend/internal/middleware"
+	"github.com/othersidedrl/portfolio/backend/internal/testimony"
 	"github.com/othersidedrl/portfolio/backend/internal/utils"
 )
 
@@ -18,6 +19,7 @@ func NewRouter(
 	authHandler *auth.Handler,
 	heroHandler *hero.Handler,
 	aboutHandler *about.Handler,
+	testimonyHandler *testimony.Handler,
 	jwtService *utils.JWTService,
 ) http.Handler {
 	r := chi.NewRouter()
