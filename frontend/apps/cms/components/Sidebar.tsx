@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { TbLogout2 } from "react-icons/tb";
 
 const navItems = [
-  { label: "Home", subpath: "/dashboard/home" },
+  { label: "Hero", subpath: "/dashboard/hero" },
   { label: "About", subpath: "/dashboard/about" },
   { label: "Testimonials", subpath: "/dashboard/testimonials" },
   { label: "Projects", subpath: "/dashboard/projects" },
