@@ -2,21 +2,20 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useUser } from '~/hooks/useUser'
+import LoadingScreen from '~/components/LoadingScreen'
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter()
-  const [loading, setLoading] = useState(true)
+  const { data: user, isLoading, isError } = useUser()
 
   useEffect(() => {
-    const token = localStorage.getItem('token') // dummy for now
-    if (!token) {
+    if (isError) {
       router.replace('/login')
-    } else {
-      setLoading(false)
     }
-  }, [])
+  }, [isError, router])
 
-  if (loading) return <p className="p-8">Checking authentication...</p>
+  if (isLoading || isError || !user) return <LoadingScreen />
 
   return <>{children}</>
 }
