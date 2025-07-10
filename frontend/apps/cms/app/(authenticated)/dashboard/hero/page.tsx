@@ -1,11 +1,31 @@
 "use client";
 
-import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import axios from "~lib/axios";
+import { useState, useEffect } from "react";
 import { BiPlus, BiUpload, BiX } from "react-icons/bi";
 
+type HeroData = {
+  name: string;
+  rank: string;
+  title: string;
+  subtitle: string;
+  resume_link: string;
+  contact_link: string;
+  image_urls: string[];
+  hobbies: string[];
+};
+
 export default function HeroForm() {
+  const { data } = useQuery({
+    queryKey: ["hero"],
+    queryFn: async () => {
+      const response = await axios.get('/admin/hero')
+      return response.data as HeroData
+    }
+  })
+
   const [form, setForm] = useState({
-    id: 0,
     name: "",
     rank: "",
     title: "",
@@ -15,6 +35,21 @@ export default function HeroForm() {
     imageUrls: [""],
     hobbies: [""],
   });
+
+  useEffect(() => {
+    if (data) {
+      setForm({
+        name: data.name || "",
+        rank: data.rank || "",
+        title: data.title || "",
+        subtitle: data.subtitle || "",
+        resumeLink: data.resume_link || "",
+        contactLink: data.contact_link || "",
+        imageUrls: data.image_urls && data.image_urls.length > 0 ? data.image_urls : [""],
+        hobbies: data.hobbies && data.hobbies.length > 0 ? data.hobbies : [""],
+      });
+    }
+  }, [data]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -77,7 +112,7 @@ export default function HeroForm() {
       {/* Basic Fields */}
       <div className="grid md:grid-cols-2 gap-6 w-full">
         <div className="flex flex-col">
-          <label htmlFor="name" className="mb-1 text-sm font-medium text-[var(--text-strong)]">
+          <label htmlFor="name" className="mb-1 text-sm font-medium text-[var(--text-muted)]">
             Name
           </label>
           <input
@@ -91,7 +126,7 @@ export default function HeroForm() {
           />
         </div>
         <div className="flex flex-col">
-          <label htmlFor="rank" className="mb-1 text-sm font-medium text-[var(--text-strong)]">
+          <label htmlFor="rank" className="mb-1 text-sm font-medium text-[var(--text-muted)]">
             Rank
           </label>
           <input
@@ -104,7 +139,7 @@ export default function HeroForm() {
           />
         </div>
         <div className="flex flex-col col-span-2">
-          <label htmlFor="title" className="mb-1 text-sm font-medium text-[var(--text-strong)]">
+          <label htmlFor="title" className="mb-1 text-sm font-medium text-[var(--text-muted)]">
             Title
           </label>
           <input
@@ -117,7 +152,7 @@ export default function HeroForm() {
           />
         </div>
         <div className="flex flex-col col-span-2">
-          <label htmlFor="subtitle" className="mb-1 text-sm font-medium text-[var(--text-strong)]">
+          <label htmlFor="subtitle" className="mb-1 text-sm font-medium text-[var(--text-muted)]">
             Subtitle
           </label>
           <textarea
@@ -130,7 +165,7 @@ export default function HeroForm() {
           />
         </div>
         <div className="flex flex-col">
-          <label htmlFor="resumeLink" className="mb-1 text-sm font-medium text-[var(--text-strong)]">
+          <label htmlFor="resumeLink" className="mb-1 text-sm font-medium text-[var(--text-muted)]">
             Resume Link
           </label>
           <input
@@ -143,7 +178,7 @@ export default function HeroForm() {
           />
         </div>
         <div className="flex flex-col">
-          <label htmlFor="contactLink" className="mb-1 text-sm font-medium text-[var(--text-strong)]">
+          <label htmlFor="contactLink" className="mb-1 text-sm font-medium text-[var(--text-muted)]">
             Contact Link
           </label>
           <input
