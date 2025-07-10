@@ -76,49 +76,85 @@ export default function HeroForm() {
 
       {/* Basic Fields */}
       <div className="grid md:grid-cols-2 gap-6 w-full">
-        <input
-          name="name"
-          placeholder="Name"
-          value={form.name}
-          onChange={handleChange}
-          className="input w-full"
-          required
-        />
-        <input
-          name="rank"
-          placeholder="Rank"
-          value={form.rank}
-          onChange={handleChange}
-          className="input w-full"
-        />
-        <input
-          name="title"
-          placeholder="Title"
-          value={form.title}
-          onChange={handleChange}
-          className="input w-full col-span-2"
-        />
-        <textarea
-          name="subtitle"
-          placeholder="Subtitle"
-          value={form.subtitle}
-          onChange={handleChange}
-          className="input w-full col-span-2"
-        />
-        <input
-          name="resumeLink"
-          placeholder="Resume Link"
-          value={form.resumeLink}
-          onChange={handleChange}
-          className="input w-full"
-        />
-        <input
-          name="contactLink"
-          placeholder="Contact Link"
-          value={form.contactLink}
-          onChange={handleChange}
-          className="input w-full"
-        />
+        <div className="flex flex-col">
+          <label htmlFor="name" className="mb-1 text-sm font-medium text-[var(--text-strong)]">
+            Name
+          </label>
+          <input
+            id="name"
+            name="name"
+            placeholder="Name"
+            value={form.name}
+            onChange={handleChange}
+            className="input w-full"
+            required
+          />
+        </div>
+        <div className="flex flex-col">
+          <label htmlFor="rank" className="mb-1 text-sm font-medium text-[var(--text-strong)]">
+            Rank
+          </label>
+          <input
+            id="rank"
+            name="rank"
+            placeholder="Rank"
+            value={form.rank}
+            onChange={handleChange}
+            className="input w-full"
+          />
+        </div>
+        <div className="flex flex-col col-span-2">
+          <label htmlFor="title" className="mb-1 text-sm font-medium text-[var(--text-strong)]">
+            Title
+          </label>
+          <input
+            id="title"
+            name="title"
+            placeholder="Title"
+            value={form.title}
+            onChange={handleChange}
+            className="input w-full"
+          />
+        </div>
+        <div className="flex flex-col col-span-2">
+          <label htmlFor="subtitle" className="mb-1 text-sm font-medium text-[var(--text-strong)]">
+            Subtitle
+          </label>
+          <textarea
+            id="subtitle"
+            name="subtitle"
+            placeholder="Subtitle"
+            value={form.subtitle}
+            onChange={handleChange}
+            className="input w-full"
+          />
+        </div>
+        <div className="flex flex-col">
+          <label htmlFor="resumeLink" className="mb-1 text-sm font-medium text-[var(--text-strong)]">
+            Resume Link
+          </label>
+          <input
+            id="resumeLink"
+            name="resumeLink"
+            placeholder="Resume Link"
+            value={form.resumeLink}
+            onChange={handleChange}
+            className="input w-full"
+          />
+        </div>
+        <div className="flex flex-col">
+          <label htmlFor="contactLink" className="mb-1 text-sm font-medium text-[var(--text-strong)]">
+            Contact Link
+          </label>
+          <input
+            id="contactLink"
+            name="contactLink"
+            placeholder="Contact Link"
+            value={form.contactLink}
+            onChange={handleChange}
+            className="input w-full"
+          />
+        </div>
       </div>
 
       {/* Image Uploads */}
@@ -166,7 +202,14 @@ export default function HeroForm() {
                     </div>
                   )}
 
+                  <label
+                    htmlFor={`image-upload-${i}`}
+                    className="sr-only"
+                  >
+                    Upload Image {i + 1}
+                  </label>
                   <input
+                    id={`image-upload-${i}`}
                     type="file"
                     accept="image/*"
                     onChange={(e) => handleFileChange(i, e)}
@@ -181,18 +224,26 @@ export default function HeroForm() {
 
       {/* Hobbies */}
       <div className="w-full">
-        <label className="block text-sm font-medium text-[var(--text-muted)] mb-2">
+        <label className="block text-md font-medium text-[var(--text-strong)] mb-2">
           Hobbies
         </label>
         <div className="space-y-2 w-full">
           {form.hobbies.map((hobby: string, i: number) => (
-            <input
-              key={i}
-              value={hobby}
-              placeholder={`Hobby ${i + 1}`}
-              onChange={(e) => handleArrayChange("hobbies", i, e.target.value)}
-              className="input w-full"
-            />
+            <div key={i} className="flex flex-col">
+              <label
+                htmlFor={`hobby-${i}`}
+                className="mb-1 text-xs font-medium text-[var(--text-muted)]"
+              >
+                Hobby {i + 1}
+              </label>
+              <input
+                id={`hobby-${i}`}
+                value={hobby}
+                placeholder={`Hobby ${i + 1}`}
+                onChange={(e) => handleArrayChange("hobbies", i, e.target.value)}
+                className="input w-full"
+              />
+            </div>
           ))}
         </div>
         <button
