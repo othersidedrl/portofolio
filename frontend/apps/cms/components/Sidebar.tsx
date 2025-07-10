@@ -12,8 +12,6 @@ const navItems = [
 export default function Sidebar() {
   const pathname = usePathname()
 
-  const basePath = pathname.endsWith('/') ? pathname.slice(0, -1) : pathname
-
   return (
     <aside
       className="w-64 h-screen px-6 py-8 flex flex-col"
@@ -27,7 +25,7 @@ export default function Sidebar() {
 
       <nav className="space-y-2">
         {navItems.map((item) => {
-          const href = `${basePath}/${item.subpath}`
+          const href = `${item.subpath}`
           const isActive = pathname === href
           return (
             <Link
