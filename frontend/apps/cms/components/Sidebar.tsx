@@ -6,6 +6,7 @@ const navItems = [
   { label: 'About', subpath: 'about' },
   { label: 'Testimonials', subpath: 'testimonials' },
   { label: 'Projects', subpath: 'projects' },
+  { label: 'Portfolio+', subpath: 'portfolio-plus' },
 ]
 
 export default function Sidebar() {
