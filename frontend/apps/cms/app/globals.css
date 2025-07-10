@@ -38,6 +38,8 @@
 
     --color-primary: hsl(var(--hue), var(--saturation), 90%);
     --color-on-primary: hsl(var(--hue), var(--saturation), 10%);
+
+    --color-accent: hsl(var(--hue), var(--saturation), 40%);
   }
 }
 
