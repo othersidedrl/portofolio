@@ -1,24 +1,34 @@
-// apps/cms/app/login/page.tsx
 'use client'
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useMutation } from '@tanstack/react-query'
+import axios from '~lib/axios'
+import { toast } from 'sonner'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const router = useRouter()
 
+  const loginMutation = useMutation({
+    mutationFn: async () => {
+      const res = await axios.post('/auth/login', { email, password })
+      return res.data
+    },
+    onSuccess: (data) => {
+      localStorage.setItem('token', data.token)
+      router.push('/dashboard')
+    },
+    onError: (err: any) => {
+      toast.error("Wrong credentials!")
+      console.error(err)
+    },
+  })
+
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault()
-
-    // Dummy auth logic
-    if (email === 'admin@example.com' && password === 'admin') {
-      localStorage.setItem('token', 'my-secret-token')
-      router.push('/dashboard')
-    } else {
-      alert('Invalid credentials')
-    }
+    loginMutation.mutate()
   }
 
   return (
@@ -60,8 +70,9 @@ export default function LoginPage() {
         <button
           type="submit"
           className="w-full py-2 bg-[var(--color-primary)] text-[var(--color-on-primary)] font-medium rounded hover:opacity-90 transition"
+          disabled={loginMutation.isPending}
         >
-          Sign In
+          {loginMutation.isPending ? 'Signing In...' : 'Sign In'}
         </button>
       </form>
     </main>
