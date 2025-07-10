@@ -1,9 +1,215 @@
-export default function HomePage() {
-    return (
-      <div className="p-6">
-        <h1 className="text-2xl font-bold">Welcome to the CMS Dashboard 🎉</h1>
-        <p>You are successfully authenticated.</p>
+"use client";
+
+import { useState } from "react";
+import { BiPlus, BiUpload, BiX } from "react-icons/bi";
+
+export default function HeroForm() {
+  const [form, setForm] = useState({
+    id: 0,
+    name: "",
+    rank: "",
+    title: "",
+    subtitle: "",
+    resumeLink: "",
+    contactLink: "",
+    imageUrls: [""],
+    hobbies: [""],
+  });
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleArrayChange = (
+    field: "imageUrls" | "hobbies",
+    index: number,
+    value: string
+  ) => {
+    const updated = [...form[field]];
+    updated[index] = value;
+    setForm((prev) => ({
+      ...prev,
+      [field]: updated,
+    }));
+  };
+
+  const addToArray = (field: "imageUrls" | "hobbies") => {
+    setForm((prev) => ({
+      ...prev,
+      [field]: [...prev[field], ""],
+    }));
+  };
+
+  const handleFileChange = (
+    index: number,
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const files = e.target.files;
+    if (files && files[0]) {
+      const newUrl = URL.createObjectURL(files[0]);
+      const updated = [...form.imageUrls];
+      updated[index] = newUrl;
+      setForm((prev) => ({ ...prev, imageUrls: updated }));
+    }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log("Submitting:", form);
+    // TODO: replace this with mutation logic
+  };
+
+  return (
+    <form
+      onSubmit={handleSubmit}
+      className="w-full p-4 md:p-8 space-y-8"
+    >
+      <h2 className="text-2xl font-bold text-[var(--text-strong)]">
+        Hero Section
+      </h2>
+
+      {/* Basic Fields */}
+      <div className="grid md:grid-cols-2 gap-6 w-full">
+        <input
+          name="name"
+          placeholder="Name"
+          value={form.name}
+          onChange={handleChange}
+          className="input w-full"
+          required
+        />
+        <input
+          name="rank"
+          placeholder="Rank"
+          value={form.rank}
+          onChange={handleChange}
+          className="input w-full"
+        />
+        <input
+          name="title"
+          placeholder="Title"
+          value={form.title}
+          onChange={handleChange}
+          className="input w-full col-span-2"
+        />
+        <textarea
+          name="subtitle"
+          placeholder="Subtitle"
+          value={form.subtitle}
+          onChange={handleChange}
+          className="input w-full col-span-2"
+        />
+        <input
+          name="resumeLink"
+          placeholder="Resume Link"
+          value={form.resumeLink}
+          onChange={handleChange}
+          className="input w-full"
+        />
+        <input
+          name="contactLink"
+          placeholder="Contact Link"
+          value={form.contactLink}
+          onChange={handleChange}
+          className="input w-full"
+        />
       </div>
-    );
-  }
-  
+
+      {/* Image Uploads */}
+      <div className="space-y-4 w-full">
+        <label className="block text-lg font-semibold mb-4 text-[var(--text-strong)]">
+          Upload Images (4 max)
+        </label>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full">
+          {Array.from({ length: 4 }).map((_, i) => {
+            const url = form.imageUrls[i] || "";
+            return (
+              <div key={i} className="group relative w-full">
+                <div
+                  className="border-2 border-dashed p-6 transition-colors duration-200 bg-transparent border-[var(--border-color)] hover:border-[var(--color-primary)]"
+                >
+                  {url ? (
+                    <div className="relative">
+                      <img
+                        src={url}
+                        alt={`Preview ${i + 1}`}
+                        className="w-full h-48 object-cover"
+                      />
+                      <button
+                        type="button"
+                        // onClick={() => removeImage(i)}
+                        className="absolute top-2 right-2 rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200 shadow-lg bg-[var(--color-accent)] text-[var(--color-on-primary)] hover:bg-[var(--color-primary)]"
+                      >
+                        <BiX size={16} />
+                      </button>
+                      <div className="absolute bottom-2 left-2 px-2 py-1 rounded text-xs bg-black bg-opacity-50 text-[var(--color-on-primary)]">
+                        Image {i + 1}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-center">
+                      <div className="flex flex-col items-center justify-center h-48">
+                        <BiUpload className="w-12 h-12 mb-4 text-[var(--border-color)]" />
+                        <p className="font-medium mb-2 text-[var(--text-muted)]">
+                          Click to upload
+                        </p>
+                        <p className="text-sm text-[var(--text-muted)]">
+                          Image {i + 1}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => handleFileChange(i, e)}
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                  />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Hobbies */}
+      <div className="w-full">
+        <label className="block text-sm font-medium text-[var(--text-muted)] mb-2">
+          Hobbies
+        </label>
+        <div className="space-y-2 w-full">
+          {form.hobbies.map((hobby: string, i: number) => (
+            <input
+              key={i}
+              value={hobby}
+              placeholder={`Hobby ${i + 1}`}
+              onChange={(e) => handleArrayChange("hobbies", i, e.target.value)}
+              className="input w-full"
+            />
+          ))}
+        </div>
+        <button
+          type="button"
+          onClick={() => addToArray("hobbies")}
+          className="mt-2 text-sm text-[var(--color-accent)] hover:underline"
+        >
+          + Add Hobby
+        </button>
+      </div>
+
+      <button
+        type="submit"
+        className="w-full py-2 bg-[var(--color-primary)] text-[var(--color-on-primary)] font-semibold rounded hover:opacity-90 transition"
+      >
+        Save
+      </button>
+    </form>
+  );
+}

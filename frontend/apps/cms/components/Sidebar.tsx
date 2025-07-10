@@ -22,7 +22,7 @@ export default function Sidebar() {
 
   return (
     <aside
-      className="w-64 h-screen px-6 py-8 flex flex-col justify-between border-r border-[var(--border-color)] shadow-[4px_0_12px_var(--shadow-color)]"
+      className="w-64 h-screen fixed px-6 py-8 flex flex-col justify-between border-r border-[var(--border-color)] shadow-[4px_0_12px_var(--shadow-color)]"
       style={{
         backgroundColor: "var(--bg-mid)",
         color: "var(--text-strong)",
