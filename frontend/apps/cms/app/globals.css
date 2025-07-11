@@ -64,7 +64,9 @@ body {
   transition: box-shadow 0.2s, border-color 0.2s;
 }
 
-.input:focus {
-  box-shadow: 0 0 0 2px var(--color-primary);
-  border-color: var(--color-primary);
+.input:focus,
+.input:active,
+.input:focus-visible {
+  box-shadow: 0 0 0 1px var(--color-accent);
+  border-color: var(--color-accent);
 }

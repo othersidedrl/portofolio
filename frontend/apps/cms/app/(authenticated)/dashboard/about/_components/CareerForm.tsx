@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "~lib/axios";
 import { toast } from "sonner";
 import { useState } from "react";
-import { BiTrash, BiPencil } from "react-icons/bi";
+import { BiTrash, BiPencil, BiCalendarEdit, BiCalendar } from "react-icons/bi";
 import Dropdown from "~/components/ui/Dropdown";
 
 interface CareerItem {
@@ -58,7 +58,9 @@ const CareerForm = () => {
       resetForm();
     },
     onError: (error: any) => {
-      toast.error(error?.response?.data?.error || "Failed to create career item.");
+      toast.error(
+        error?.response?.data?.error || "Failed to create career item."
+      );
     },
   });
 
@@ -70,7 +72,10 @@ const CareerForm = () => {
       id: number;
       updatedCareer: Partial<Omit<CareerItem, "id">>;
     }) => {
-      const response = await axios.patch(`admin/about/careers/${id}`, updatedCareer);
+      const response = await axios.patch(
+        `admin/about/careers/${id}`,
+        updatedCareer
+      );
       return response.data;
     },
     onSuccess: () => {
@@ -79,7 +84,9 @@ const CareerForm = () => {
       resetForm();
     },
     onError: (error: any) => {
-      toast.error(error?.response?.data?.error || "Failed to update career item.");
+      toast.error(
+        error?.response?.data?.error || "Failed to update career item."
+      );
     },
   });
 
@@ -93,7 +100,9 @@ const CareerForm = () => {
       toast.success("Career item deleted successfully!");
     },
     onError: (error: any) => {
-      toast.error(error?.response?.data?.error || "Failed to delete career item.");
+      toast.error(
+        error?.response?.data?.error || "Failed to delete career item."
+      );
     },
   });
 
@@ -140,80 +149,171 @@ const CareerForm = () => {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      <h2 className="text-2xl font-bold text-[var(--text-strong)]">Career Timeline</h2>
+      <h2 className="text-2xl font-bold text-[var(--text-strong)]">
+        Career Timeline
+      </h2>
 
       <div className="flex flex-col space-y-4">
+        {/* Started At, Ended At, Present */}
         <div className="flex gap-2">
+          <div className="flex flex-col flex-1">
+            <label
+              htmlFor="started_at"
+              className="mb-1 text-sm font-medium text-[var(--text-muted)]"
+            >
+              Start Date
+            </label>
+            <div className="relative">
+              <input
+                id="started_at"
+                type="date"
+                value={form.started_at}
+                onChange={(e) =>
+                  setForm({ ...form, started_at: e.target.value })
+                }
+                className="input pr-10"
+                required
+              />
+              <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-primary)]">
+                <BiCalendar />
+              </span>
+            </div>
+          </div>
+          <div className="flex flex-col flex-1">
+            <label
+              htmlFor="ended_at"
+              className="mb-1 text-sm font-medium text-[var(--text-muted)]"
+            >
+              End Date
+            </label>
+            <div className="relative">
+              {isPresent ? (
+                <input
+                  type="text"
+                  value="Present"
+                  disabled
+                  className="input pr-10 italic text-[var(--text-muted)] bg-[var(--bg-light)] cursor-not-allowed"
+                />
+              ) : (
+                <input
+                  id="ended_at"
+                  type="date"
+                  value={form.ended_at}
+                  onChange={(e) =>
+                    setForm({ ...form, ended_at: e.target.value })
+                  }
+                  className="input pr-10"
+                  required
+                />
+              )}
+              <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-primary)]">
+                <BiCalendar />
+              </span>
+            </div>
+          </div>
+          <div className="flex flex-col justify-end">
+            <label className="flex items-center gap-2 text-sm font-medium text-[var(--text-muted)] mb-1">
+              <input
+                type="checkbox"
+                checked={isPresent}
+                onChange={(e) => setIsPresent(e.target.checked)}
+                className="accent-[var(--color-primary)] w-4 h-4 rounded border-[var(--border-color)] focus:ring-2 focus:ring-[var(--color-primary)] transition"
+              />
+              <span className="select-none text-[var(--text-strong)]">
+                Present
+              </span>
+            </label>
+          </div>
+        </div>
+
+        {/* Title */}
+        <div className="flex flex-col">
+          <label
+            htmlFor="career-title"
+            className="mb-1 text-sm font-medium text-[var(--text-muted)]"
+          >
+            Title
+          </label>
           <input
-            type="date"
-            value={form.started_at}
-            onChange={(e) => setForm({ ...form, started_at: e.target.value })}
+            id="career-title"
+            type="text"
+            placeholder="Title"
+            value={form.title}
+            onChange={(e) => setForm({ ...form, title: e.target.value })}
             className="input"
             required
           />
-          <input
-            type="date"
-            value={form.ended_at}
-            onChange={(e) => setForm({ ...form, ended_at: e.target.value })}
-            className="input"
-            disabled={isPresent}
-            required={!isPresent}
-          />
-          <label className="flex items-center gap-2 text-sm">
-            <input
-              type="checkbox"
-              checked={isPresent}
-              onChange={(e) => setIsPresent(e.target.checked)}
-            />
-            Present
-          </label>
         </div>
 
-        <input
-          type="text"
-          placeholder="Title"
-          value={form.title}
-          onChange={(e) => setForm({ ...form, title: e.target.value })}
-          className="input"
-          required
-        />
+        {/* Affiliation */}
+        <div className="flex flex-col">
+          <label
+            htmlFor="career-affiliation"
+            className="mb-1 text-sm font-medium text-[var(--text-muted)]"
+          >
+            Affiliation
+          </label>
+          <input
+            id="career-affiliation"
+            type="text"
+            placeholder="Affiliation"
+            value={form.affiliation}
+            onChange={(e) => setForm({ ...form, affiliation: e.target.value })}
+            className="input"
+            required
+          />
+        </div>
 
-        <input
-          type="text"
-          placeholder="Affiliation"
-          value={form.affiliation}
-          onChange={(e) => setForm({ ...form, affiliation: e.target.value })}
-          className="input"
-          required
-        />
+        {/* Location */}
+        <div className="flex flex-col">
+          <label
+            htmlFor="career-location"
+            className="mb-1 text-sm font-medium text-[var(--text-muted)]"
+          >
+            Location
+          </label>
+          <input
+            id="career-location"
+            type="text"
+            placeholder="Location"
+            value={form.location}
+            onChange={(e) => setForm({ ...form, location: e.target.value })}
+            className="input"
+          />
+        </div>
 
-        <input
-          type="text"
-          placeholder="Location"
-          value={form.location}
-          onChange={(e) => setForm({ ...form, location: e.target.value })}
-          className="input"
-        />
+        {/* Description */}
+        <div className="flex flex-col">
+          <label
+            htmlFor="career-description"
+            className="mb-1 text-sm font-medium text-[var(--text-muted)]"
+          >
+            Description
+          </label>
+          <textarea
+            id="career-description"
+            placeholder="Description"
+            value={form.description}
+            onChange={(e) => setForm({ ...form, description: e.target.value })}
+            className="input"
+          />
+        </div>
 
-        <textarea
-          placeholder="Description"
-          value={form.description}
-          onChange={(e) => setForm({ ...form, description: e.target.value })}
-          className="input"
-        />
-
-        <Dropdown
-          label="Type"
-          value={form.type}
-          onChange={(val) =>
-            setForm((prev) => ({
-              ...prev,
-              type: val as CareerItem["type"],
-            }))
-          }
-          options={["Education", "Job"]}
-          placeholder="Select type"
-        />
+        {/* Type */}
+        <div className="flex flex-col">
+          <Dropdown
+            label="Type"
+            value={form.type}
+            onChange={(val) =>
+              setForm((prev) => ({
+                ...prev,
+                type: val as CareerItem["type"],
+              }))
+            }
+            options={["Education", "Job"]}
+            placeholder="Select type"
+          />
+        </div>
 
         <div className="flex gap-2">
           <button
@@ -235,7 +335,9 @@ const CareerForm = () => {
       </div>
 
       <div className="pt-6 border-t border-[var(--border-color)] space-y-4">
-        <h3 className="text-lg font-semibold text-[var(--text-strong)]">Your Career Items</h3>
+        <h3 className="text-lg font-semibold text-[var(--text-strong)]">
+          Your Career Items
+        </h3>
         {career?.data?.map((item) => (
           <div
             key={item.id}
@@ -263,9 +365,12 @@ const CareerForm = () => {
               </div>
             </div>
             <p className="text-sm text-[var(--text-muted)]">
-              {item.started_at} - {item.ended_at} | {item.location} | {item.type}
+              {item.started_at} - {item.ended_at} | {item.location} |{" "}
+              {item.type}
             </p>
-            <p className="text-sm text-[var(--text-normal)]">{item.description}</p>
+            <p className="text-sm text-[var(--text-normal)]">
+              {item.description}
+            </p>
           </div>
         ))}
       </div>
