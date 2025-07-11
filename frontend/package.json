@@ -9,5 +9,11 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "packageManager": "pnpm@10.8.1"
+  "packageManager": "pnpm@10.8.1",
+  "dependencies": {
+    "@ariakit/react": "^0.4.17",
+    "@tanstack/react-query": "^5.82.0",
+    "axios": "^1.10.0",
+    "react-icons": "^5.5.0"
+  }
 }
