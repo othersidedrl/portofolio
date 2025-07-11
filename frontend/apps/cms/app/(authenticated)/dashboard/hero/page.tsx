@@ -168,7 +168,7 @@ export default function HeroForm() {
   return (
     <div className="relative w-full">
       {uploadImageMutation.isPending && (
-        <div className="absolute inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 backdrop-blur-sm">
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-opacity-40 backdrop-blur-sm">
           <div className="bg-[var(--bg-mid)] rounded-xl shadow-2xl p-6 flex flex-col items-center gap-4 border border-[var(--border-color)]">
             <BiLoaderAlt
               className="animate-spin text-[var(--color-primary)]"
