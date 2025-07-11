@@ -3,7 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import axios from "~lib/axios";
-import { BiCheck, BiTrash } from "react-icons/bi";
+import { BiCheck, BiTrash, BiX } from "react-icons/bi";
 import { LuSparkles } from "react-icons/lu";
 
 interface TestimonyItem {
@@ -47,6 +47,16 @@ const TestimonyItems = () => {
     onError: () => toast.error("Failed to approve testimony."),
   });
 
+  const unapproveMutation = useMutation({
+    mutationFn: async (id: string) =>
+      axios.patch(`/admin/testimony/items/${id}/approve`, { approved: false }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["testimony-items"] });
+      toast.success("Testimony unapproved!");
+    },
+    onError: () => toast.error("Failed to unapprove testimony."),
+  });
+
   const deleteMutation = useMutation({
     mutationFn: async (id: string) =>
       axios.delete(`/admin/testimony/items/${id}`),
@@ -88,7 +98,15 @@ const TestimonyItems = () => {
                   {item.name}
                 </p>
                 <div className="flex gap-2">
-                  {!item.approved && (
+                  {item.approved ? (
+                    <button
+                      onClick={() => unapproveMutation.mutate(item.id)}
+                      className="text-yellow-600 hover:text-yellow-700"
+                      title="Unapprove"
+                    >
+                      <BiX size={18} />
+                    </button>
+                  ) : (
                     <button
                       onClick={() => approveMutation.mutate(item.id)}
                       className="text-green-600 hover:text-green-700"
@@ -113,7 +131,6 @@ const TestimonyItems = () => {
                 <LuSparkles className="w-4 h-4 text-[var(--color-primary)] mt-0.5 shrink-0" />
                 <span>{item.ai_summary}</span>
               </div>
-
 
               {item.approved && (
                 <span className="text-xs text-green-600 font-medium">
