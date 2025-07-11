@@ -8,11 +8,11 @@ type TestimonyPageDto struct {
 type TestimonyItemDto struct {
 	ID          int    `json:"id"`
 	Name        string `json:"name"`
-	ProfileUrl  string `json:"profileUrl"`
+	ProfileUrl  string `json:"profile_url"`
 	Affiliation string `json:"affiliation"`
 	Rating      int    `json:"rating"`
 	Description string `json:"description"`
-	AISummary   string `json:"aiSummary"`
+	AISummary   string `json:"ai_summary"`
 	Approved    bool   `json:"approved"`
 }
 

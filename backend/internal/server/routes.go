@@ -98,6 +98,8 @@ func NewRouter(
 
 			// Testimonies (public)
 			r.Get("/testimony", customMiddleware.RedisCache(redis, "testimony_page_cache", pageTTL, testimonyHandler.GetTestimonyPage))
+			r.Post("/image", imageHandler.UploadProfileImage)
+			r.Post("/testimony/items", customMiddleware.RemoveCache(redis, "testimony_approved_cache", testimonyHandler.CreateTestimony))
 			r.Get("/testimony/items/approved", customMiddleware.RedisCache(redis, "testimony_approved_cache", sectionTTL, testimonyHandler.GetApprovedTestimonies))
 
 			// Projects (public)
@@ -155,8 +157,6 @@ func NewRouter(
 
 				r.Route("/items", func(r chi.Router) {
 					r.Get("/", testimonyHandler.GetTestimonies)
-					r.Post("/image", imageHandler.UploadProfileImage)
-					r.Post("/", customMiddleware.RemoveCache(redis, "testimony_approved_cache", testimonyHandler.CreateTestimony))
 					r.Patch("/{id}", customMiddleware.RemoveCache(redis, "testimony_approved_cache", testimonyHandler.UpdateTestimony))
 					r.Patch("/{id}/approve", customMiddleware.RemoveCache(redis, "testimony_approved_cache", testimonyHandler.ApproveTestimony))
 					r.Delete("/{id}", customMiddleware.RemoveCache(redis, "testimony_approved_cache", testimonyHandler.DeleteTestimony))
