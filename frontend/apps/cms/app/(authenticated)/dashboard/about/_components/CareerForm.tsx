@@ -127,7 +127,7 @@ const CareerForm = () => {
   };
 
   return (
-    <>
+    <div className="w-full p-4 md:p-8 space-y-8 bg-[var(--bg-mid)] border border-[var(--border-color)] rounded-xl shadow-sm max-h-[446px] overflow-y-auto custom-scrollbar">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold text-[var(--text-strong)]">Career Timeline</h2>
         <button
@@ -146,7 +146,7 @@ const CareerForm = () => {
         {career?.data?.map((item: CareerItem) => (
           <div
             key={item.id}
-            className="flex flex-col gap-1 p-4 bg-[var(--bg-mid)] rounded shadow-sm border border-[var(--border-color)]"
+            className="flex flex-col gap-1 p-4 bg-[var(--bg-light)] rounded shadow-sm border border-[var(--border-color)]"
           >
             <div className="flex justify-between items-center">
               <p className="font-semibold">
@@ -293,7 +293,7 @@ const CareerForm = () => {
           </form>
         </div>
       </Ariakit.Dialog>
-    </>
+    </div>
   );
 };
 

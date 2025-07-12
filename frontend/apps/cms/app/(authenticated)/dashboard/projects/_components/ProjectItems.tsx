@@ -446,100 +446,102 @@ const ProjectItems = () => {
       ) : projectItems?.data?.length === 0 ? (
         <p className="text-[var(--text-muted)]">No projects yet.</p>
       ) : (
-        projectItems?.data?.map((item) => (
-          <div
-            key={item.id}
-            className="p-4 border border-[var(--border-color)] bg-[var(--bg-mid)] rounded-xl shadow-sm space-y-2"
-          >
-            <div className="flex justify-between items-start">
-              <div>
-                <h3 className="font-semibold text-[var(--text-strong)]">
-                  {item.name}
-                </h3>
-                <p className="text-sm text-[var(--text-muted)]">
-                  {item.type} • {item.contribution}
-                </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {projectItems?.data?.map((item) => (
+            <div
+              key={item.id}
+              className="p-4 border border-[var(--border-color)] bg-[var(--bg-mid)] rounded-xl shadow-sm space-y-2"
+            >
+              <div className="flex justify-between items-start">
+                <div>
+                  <h3 className="font-semibold text-[var(--text-strong)]">
+                    {item.name}
+                  </h3>
+                  <p className="text-sm text-[var(--text-muted)]">
+                    {item.type} • {item.contribution}
+                  </p>
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    className="text-blue-600 hover:text-blue-700"
+                    onClick={() => handleEdit(item)}
+                    title="Edit"
+                  >
+                    <BiPencil size={18} />
+                  </button>
+                  <button
+                    className="text-red-500 hover:text-red-600"
+                    onClick={() => deleteMutation.mutate(item.id)}
+                    title="Delete"
+                  >
+                    <BiTrash size={18} />
+                  </button>
+                </div>
               </div>
-              <div className="flex gap-2">
-                <button
-                  className="text-blue-600 hover:text-blue-700"
-                  onClick={() => handleEdit(item)}
-                  title="Edit"
-                >
-                  <BiPencil size={18} />
-                </button>
-                <button
-                  className="text-red-500 hover:text-red-600"
-                  onClick={() => deleteMutation.mutate(item.id)}
-                  title="Delete"
-                >
-                  <BiTrash size={18} />
-                </button>
+
+              <div className="text-sm text-[var(--text-normal)] whitespace-pre-wrap">
+                {item.description}
+              </div>
+
+              <div className="flex flex-wrap gap-2 text-xs text-[var(--text-muted)]">
+                {item.techStack.map((tech, i) => (
+                  <span
+                    key={i}
+                    className="px-2 py-0.5 bg-[var(--bg-light)] border border-[var(--border-color)] rounded"
+                  >
+                    {tech}
+                  </span>
+                ))}
+              </div>
+
+              <div className="flex gap-4 text-sm">
+                {item.githubLink && (
+                  <a
+                    href={item.githubLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[var(--color-primary)] hover:underline hover:text-[var(--color-accent)] transition-colors"
+                  >
+                    <span className="flex items-center gap-1 group">
+                      <BiLogoGithub
+                        size={16}
+                        className="transition-colors"
+                      />{" "}
+                      GitHub
+                    </span>
+                  </a>
+                )}
+                {item.projectLink && (
+                  <a
+                    href={item.projectLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[var(--color-primary)] hover:underline hover:text-[var(--color-accent)] transition-colors"
+                  >
+                    <span className="flex items-center gap-1 group">
+                      Live Site{" "}
+                      <BiLinkExternal
+                        size={16}
+                        className="transition-colors"
+                      />
+                    </span>
+                  </a>
+                )}
+              </div>
+
+              <div className="grid grid-cols-3 gap-2 mt-2">
+                {item.imageUrls.map((url, i) => (
+                  <img
+                    key={i}
+                    src={url}
+                    alt={`Project ${item.name} ${i}`}
+                    className="w-full h-32 object-cover rounded"
+                  />
+                ))}
               </div>
             </div>
-
-            <div className="text-sm text-[var(--text-normal)] whitespace-pre-wrap">
-              {item.description}
-            </div>
-
-            <div className="flex flex-wrap gap-2 text-xs text-[var(--text-muted)]">
-              {item.techStack.map((tech, i) => (
-                <span
-                  key={i}
-                  className="px-2 py-0.5 bg-[var(--bg-light)] border border-[var(--border-color)] rounded"
-                >
-                  {tech}
-                </span>
-              ))}
-            </div>
-
-            <div className="flex gap-4 text-sm">
-              {item.githubLink && (
-                <a
-                  href={item.githubLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-[var(--color-primary)] hover:underline hover:text-[var(--color-accent)] transition-colors"
-                >
-                  <span className="flex items-center gap-1 group">
-                    <BiLogoGithub
-                      size={16}
-                      className="transition-colors"
-                    />{" "}
-                    GitHub
-                  </span>
-                </a>
-              )}
-              {item.projectLink && (
-                <a
-                  href={item.projectLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-[var(--color-primary)] hover:underline hover:text-[var(--color-accent)] transition-colors"
-                >
-                  <span className="flex items-center gap-1 group">
-                    Live Site{" "}
-                    <BiLinkExternal
-                      size={16}
-                      className="transition-colors"
-                    />
-                  </span>
-                </a>
-              )}
-            </div>
-
-            <div className="grid grid-cols-3 gap-2 mt-2">
-              {item.imageUrls.map((url, i) => (
-                <img
-                  key={i}
-                  src={url}
-                  alt={`Project ${item.name} ${i}`}
-                  className="w-full h-24 object-cover rounded"
-                />
-              ))}
-            </div>
-          </div>
-        ))
+          ))}
+        </div>
       )}
     </div>
   );

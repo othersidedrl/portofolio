@@ -9,18 +9,18 @@ const AboutPage = () => {
     <div className="relative w-full">
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         {/* ABOUT - spans full width (both columns) */}
-        <div className="md:col-span-2">
+        <div className="flex col-span-2 gap-6">
           <AboutForm />
+          <CareerForm />
         </div>
 
         {/* SKILLS - left column */}
-        <div>
+        <div className="flex col-span-2 gap-6">
           <SkillsForm />
         </div>
 
         {/* CAREER - right column */}
         <div>
-          <CareerForm />
         </div>
       </div>
     </div>

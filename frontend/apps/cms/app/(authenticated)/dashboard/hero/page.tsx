@@ -181,212 +181,220 @@ export default function HeroForm() {
         </div>
       )}
       <form onSubmit={handleSubmit} className="w-full p-4 md:p-8 space-y-8">
-        <h2 className="text-2xl font-bold text-[var(--text-strong)]">
-          Hero Section
-        </h2>
-
-        {/* Basic Fields */}
-        <div className="grid md:grid-cols-2 gap-6 w-full">
-          <div className="flex flex-col">
-            <label
-              htmlFor="name"
-              className="mb-1 text-sm font-medium text-[var(--text-muted)]"
-            >
-              Name
-            </label>
-            <input
-              id="name"
-              name="name"
-              placeholder="Name"
-              value={form.name}
-              onChange={handleChange}
-              className="input w-full"
-              required
-            />
-          </div>
-          <div className="flex flex-col">
-            <label
-              htmlFor="rank"
-              className="mb-1 text-sm font-medium text-[var(--text-muted)]"
-            >
-              Rank
-            </label>
-            <input
-              id="rank"
-              name="rank"
-              placeholder="Rank"
-              value={form.rank}
-              onChange={handleChange}
-              className="input w-full"
-            />
-          </div>
-          <div className="flex flex-col col-span-2">
-            <label
-              htmlFor="title"
-              className="mb-1 text-sm font-medium text-[var(--text-muted)]"
-            >
-              Title
-            </label>
-            <input
-              id="title"
-              name="title"
-              placeholder="Title"
-              value={form.title}
-              onChange={handleChange}
-              className="input w-full"
-            />
-          </div>
-          <div className="flex flex-col col-span-2">
-            <label
-              htmlFor="subtitle"
-              className="mb-1 text-sm font-medium text-[var(--text-muted)]"
-            >
-              Subtitle
-            </label>
-            <textarea
-              id="subtitle"
-              name="subtitle"
-              placeholder="Subtitle"
-              value={form.subtitle}
-              onChange={handleChange}
-              className="input w-full"
-            />
-          </div>
-          <div className="flex flex-col">
-            <label
-              htmlFor="resumeLink"
-              className="mb-1 text-sm font-medium text-[var(--text-muted)]"
-            >
-              Resume Link
-            </label>
-            <input
-              id="resumeLink"
-              name="resumeLink"
-              placeholder="Resume Link"
-              value={form.resumeLink}
-              onChange={handleChange}
-              className="input w-full"
-            />
-          </div>
-          <div className="flex flex-col">
-            <label
-              htmlFor="contactLink"
-              className="mb-1 text-sm font-medium text-[var(--text-muted)]"
-            >
-              Contact Link
-            </label>
-            <input
-              id="contactLink"
-              name="contactLink"
-              placeholder="Contact Link"
-              value={form.contactLink}
-              onChange={handleChange}
-              className="input w-full"
-            />
-          </div>
-        </div>
-
-        {/* Image Uploads */}
-        <div className="space-y-4 w-full">
-          <label className="block text-lg font-semibold mb-4 text-[var(--text-strong)]">
-            Upload Images (4 max)
-          </label>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full">
-            {Array.from({ length: 4 }).map((_, i) => {
-              const url = form.imageUrls[i] || "";
-              return (
-                <div key={i} className="group relative w-full">
-                  <div className="border-2 border-dashed p-6 transition-colors duration-200 bg-transparent border-[var(--border-color)] hover:border-[var(--color-primary)]">
-                    {url ? (
-                      <div className="relative">
-                        <img
-                          src={url}
-                          alt={`Preview ${i + 1}`}
-                          className="w-full h-48 object-cover"
-                        />
-                        <button
-                          type="button"
-                          // onClick={() => removeImage(i)}
-                          className="absolute top-2 right-2 rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200 shadow-lg bg-[var(--color-accent)] text-[var(--color-on-primary)] hover:bg-[var(--color-primary)]"
-                        >
-                          <BiX size={16} />
-                        </button>
-                        <div className="absolute bottom-2 left-2 px-2 py-1 rounded text-xs bg-black bg-opacity-50 text-[var(--text-normal)]">
-                          Image {i + 1}
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="text-center">
-                        <div className="flex flex-col items-center justify-center h-48">
-                          <BiUpload className="w-12 h-12 mb-4 text-[var(--border-color)]" />
-                          <p className="font-medium mb-2 text-[var(--text-muted)]">
-                            Click to upload
-                          </p>
-                          <p className="text-sm text-[var(--text-muted)]">
-                            Image {i + 1}
-                          </p>
-                        </div>
-                      </div>
-                    )}
-
-                    <label htmlFor={`image-upload-${i}`} className="sr-only">
-                      Upload Image {i + 1}
-                    </label>
-                    <input
-                      id={`image-upload-${i}`}
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => handleFileChange(i, e)}
-                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                    />
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Hobbies */}
-        <div className="w-full">
-          <label className="block text-md font-medium text-[var(--text-strong)] mb-2">
-            Hobbies
-          </label>
-          <div className="space-y-2 w-full">
-            {form.hobbies.map((hobby: string, i: number) => (
-              <div key={i} className="flex flex-col">
-                <label
-                  htmlFor={`hobby-${i}`}
-                  className="mb-1 text-xs font-medium text-[var(--text-muted)]"
-                >
-                  Hobby {i + 1}
-                </label>
-                <input
-                  id={`hobby-${i}`}
-                  value={hobby}
-                  placeholder={`Hobby ${i + 1}`}
-                  onChange={(e) =>
-                    handleArrayChange("hobbies", i, e.target.value)
-                  }
-                  className="input w-full"
-                />
-              </div>
-            ))}
-          </div>
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl font-bold text-[var(--text-strong)]">
+            Hero Section
+          </h2>
           <button
-            type="button"
-            onClick={() => addToArray("hobbies")}
-            className="mt-2 text-sm text-[var(--color-accent)] hover:underline"
+            type="submit"
+            className="max-w-[200px] w-full cursor-pointer py-2 bg-[var(--color-primary)] text-[var(--color-on-primary)] font-semibold rounded hover:opacity-90 transition"
           >
-            + Add Hobby
+            Save
           </button>
         </div>
 
-        <button
-          type="submit"
-          className="w-full py-2 bg-[var(--color-primary)] text-[var(--color-on-primary)] font-semibold rounded hover:opacity-90 transition"
-        >
-          Save
-        </button>
+        {/* Basic Fields */}
+        <div className="grid md:grid-cols-2 gap-6 w-full">
+          {/* Left column: All fields */}
+          <div className="flex flex-col gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="flex flex-col">
+                <label
+                  htmlFor="name"
+                  className="mb-1 text-sm font-medium text-[var(--text-muted)]"
+                >
+                  Name
+                </label>
+                <input
+                  id="name"
+                  name="name"
+                  placeholder="Name"
+                  value={form.name}
+                  onChange={handleChange}
+                  className="input w-full"
+                  required
+                />
+              </div>
+              <div className="flex flex-col">
+                <label
+                  htmlFor="rank"
+                  className="mb-1 text-sm font-medium text-[var(--text-muted)]"
+                >
+                  Rank
+                </label>
+                <input
+                  id="rank"
+                  name="rank"
+                  placeholder="Rank"
+                  value={form.rank}
+                  onChange={handleChange}
+                  className="input w-full"
+                />
+              </div>
+            </div>
+            <div className="flex flex-col">
+              <label
+                htmlFor="title"
+                className="mb-1 text-sm font-medium text-[var(--text-muted)]"
+              >
+                Title
+              </label>
+              <input
+                id="title"
+                name="title"
+                placeholder="Title"
+                value={form.title}
+                onChange={handleChange}
+                className="input w-full"
+              />
+            </div>
+            <div className="flex flex-col">
+              <label
+                htmlFor="subtitle"
+                className="mb-1 text-sm font-medium text-[var(--text-muted)]"
+              >
+                Subtitle
+              </label>
+              <textarea
+                id="subtitle"
+                name="subtitle"
+                placeholder="Subtitle"
+                value={form.subtitle}
+                onChange={handleChange}
+                className="input w-full"
+              />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="flex flex-col">
+                <label
+                  htmlFor="resumeLink"
+                  className="mb-1 text-sm font-medium text-[var(--text-muted)]"
+                >
+                  Resume Link
+                </label>
+                <input
+                  id="resumeLink"
+                  name="resumeLink"
+                  placeholder="Resume Link"
+                  value={form.resumeLink}
+                  onChange={handleChange}
+                  className="input w-full"
+                />
+              </div>
+              <div className="flex flex-col">
+                <label
+                  htmlFor="contactLink"
+                  className="mb-1 text-sm font-medium text-[var(--text-muted)]"
+                >
+                  Contact Link
+                </label>
+                <input
+                  id="contactLink"
+                  name="contactLink"
+                  placeholder="Contact Link"
+                  value={form.contactLink}
+                  onChange={handleChange}
+                  className="input w-full"
+                />
+              </div>
+            </div>
+            {/* Hobbies */}
+            <div className="w-full">
+              <div className="flex items-center justify-between mb-1">
+                <label className="block text-sm font-medium text-[var(--text-muted)]">
+                  Hobbies
+                </label>
+                <button
+                  type="button"
+                  onClick={() => addToArray("hobbies")}
+                  className="text-xs text-[var(--color-accent)] hover:underline"
+                >
+                  + Add Hobby
+                </button>
+              </div>
+              <div className="w-full max-h-37 overflow-y-auto space-y-[6px] pr-1 custom-scrollbar">
+                {form.hobbies.map((hobby: string, i: number) => (
+                  <div
+                    key={i}
+                    className="flex items-center gap-2 bg-[var(--bg-muted)] rounded-md px-2 py-[3px] transition focus-within:ring-1 focus-within:ring-[var(--color-accent)]"
+                  >
+                    <span className="text-xs text-[var(--text-muted)] w-4 shrink-0 text-center">
+                      {i + 1}
+                    </span>
+                    <input
+                      id={`hobby-${i}`}
+                      value={hobby}
+                      placeholder="Coding..."
+                      onChange={(e) =>
+                        handleArrayChange("hobbies", i, e.target.value)
+                      }
+                      className="text-sm bg-transparent w-full focus:outline-none text-[var(--text-strong)] placeholder:text-[var(--text-muted)]"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+          {/* Right column: Image Uploads */}
+          <div className="space-y-4 w-full">
+            <label className="block text-lg font-semibold mb-4 text-[var(--text-strong)]">
+              Upload Images (4 max)
+            </label>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full">
+              {Array.from({ length: 4 }).map((_, i) => {
+                const url = form.imageUrls[i] || "";
+                return (
+                  <div key={i} className="group relative w-full">
+                    <div className="border-2 border-dashed p-6 transition-colors duration-200 bg-transparent border-[var(--border-color)] hover:border-[var(--color-primary)]">
+                      {url ? (
+                        <div className="relative">
+                          <img
+                            src={url}
+                            alt={`Preview ${i + 1}`}
+                            className="w-full h-48 object-cover"
+                          />
+                          <button
+                            type="button"
+                            // onClick={() => removeImage(i)}
+                            className="absolute top-2 right-2 rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200 shadow-lg bg-[var(--color-accent)] text-[var(--color-on-primary)] hover:bg-[var(--color-primary)]"
+                          >
+                            <BiX size={16} />
+                          </button>
+                          <div className="absolute bottom-2 left-2 px-2 py-1 rounded text-xs bg-black bg-opacity-50 text-[var(--text-normal)]">
+                            Image {i + 1}
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="text-center">
+                          <div className="flex flex-col items-center justify-center h-48">
+                            <BiUpload className="w-12 h-12 mb-4 text-[var(--border-color)]" />
+                            <p className="font-medium mb-2 text-[var(--text-muted)]">
+                              Click to upload
+                            </p>
+                            <p className="text-sm text-[var(--text-muted)]">
+                              Image {i + 1}
+                            </p>
+                          </div>
+                        </div>
+                      )}
+
+                      <label htmlFor={`image-upload-${i}`} className="sr-only">
+                        Upload Image {i + 1}
+                      </label>
+                      <input
+                        id={`image-upload-${i}`}
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => handleFileChange(i, e)}
+                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
       </form>
     </div>
   );
