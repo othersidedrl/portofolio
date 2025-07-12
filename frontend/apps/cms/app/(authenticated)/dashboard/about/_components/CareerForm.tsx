@@ -127,7 +127,7 @@ const CareerForm = () => {
   };
 
   return (
-    <div className="w-full p-4 md:p-8 space-y-8 bg-[var(--bg-mid)] border border-[var(--border-color)] rounded-xl shadow-sm max-h-[446px] overflow-y-auto custom-scrollbar">
+    <div className="w-full p-4 md:p-8 space-y-8 bg-[var(--bg-mid)] border border-[var(--border-color)] rounded-xl shadow-sm">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold text-[var(--text-strong)]">Career Timeline</h2>
         <button
@@ -142,7 +142,7 @@ const CareerForm = () => {
         </button>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-4 pr-6 max-h-[350px] overflow-y-auto custom-scrollbar">
         {career?.data?.map((item: CareerItem) => (
           <div
             key={item.id}

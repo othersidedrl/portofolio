@@ -105,84 +105,88 @@ const TestimonyItems = () => {
       ) : isError ? (
         <p className="text-red-500">Failed to load testimonies.</p>
       ) : filteredItems?.length === 0 ? (
-        <p className="text-[var(--text-muted)]">No {activeTab.toLowerCase()} testimonies.</p>
+        <p className="text-[var(--text-muted)]">
+          No {activeTab.toLowerCase()} testimonies.
+        </p>
       ) : (
-        filteredItems?.map((item) => (
-          <div
-            key={item.id}
-            className="flex items-start gap-4 p-4 bg-[var(--bg-mid)] border border-[var(--border-color)] rounded-xl shadow-sm hover:shadow-md transition"
-          >
-            {/* Avatar */}
-            <img
-              src={
-                item.profile_url ||
-                `https://api.dicebear.com/7.x/initials/svg?seed=${item.name}`
-              }
-              alt={item.name}
-              className="w-12 h-12 rounded-full object-cover border border-[var(--border-color)]"
-            />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {filteredItems?.map((item) => (
+            <div
+              key={item.id}
+              className="flex items-start gap-4 p-4 bg-[var(--bg-mid)] border border-[var(--border-color)] rounded-xl shadow-sm hover:shadow-md transition"
+            >
+              {/* Avatar */}
+              <img
+                src={
+                  item.profile_url ||
+                  `https://api.dicebear.com/7.x/initials/svg?seed=${item.name}`
+                }
+                alt={item.name}
+                className="w-12 h-12 rounded-full object-cover border border-[var(--border-color)]"
+              />
 
-            {/* Content */}
-            <div className="flex-1 space-y-3">
-              {/* Header */}
-              <div className="flex justify-between items-start">
-                <div>
-                  <p className="font-semibold text-[var(--text-strong)]">
-                    {item.name}
-                  </p>
-                  <p className="text-xs text-[var(--text-muted)]">
-                    {item.affiliation}
-                  </p>
+              {/* Content */}
+              <div className="flex-1 space-y-3">
+                {/* Header */}
+                <div className="flex justify-between items-start">
+                  <div>
+                    <p className="font-semibold text-[var(--text-strong)]">
+                      {item.name}
+                    </p>
+                    <p className="text-xs text-[var(--text-muted)]">
+                      {item.affiliation}
+                    </p>
+                  </div>
+
+                  <div className="flex gap-1">
+                    {item.approved ? (
+                      <button
+                        onClick={() => unapproveMutation.mutate(item.id)}
+                        className="text-yellow-500 hover:text-yellow-400 p-1 rounded hover:bg-yellow-500/10"
+                        title="Unapprove"
+                      >
+                        <BiX size={18} />
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => approveMutation.mutate(item.id)}
+                        className="text-green-500 hover:text-green-400 p-1 rounded hover:bg-green-500/10"
+                        title="Approve"
+                      >
+                        <BiCheck size={18} />
+                      </button>
+                    )}
+                    <button
+                      onClick={() => deleteMutation.mutate(item.id)}
+                      className="text-red-500 hover:text-red-400 p-1 rounded hover:bg-red-500/10"
+                      title="Delete"
+                    >
+                      <BiTrash size={18} />
+                    </button>
+                  </div>
                 </div>
 
-                <div className="flex gap-1">
-                  {item.approved ? (
-                    <button
-                      onClick={() => unapproveMutation.mutate(item.id)}
-                      className="text-yellow-500 hover:text-yellow-400 p-1 rounded hover:bg-yellow-500/10"
-                      title="Unapprove"
-                    >
-                      <BiX size={18} />
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => approveMutation.mutate(item.id)}
-                      className="text-green-500 hover:text-green-400 p-1 rounded hover:bg-green-500/10"
-                      title="Approve"
-                    >
-                      <BiCheck size={18} />
-                    </button>
-                  )}
-                  <button
-                    onClick={() => deleteMutation.mutate(item.id)}
-                    className="text-red-500 hover:text-red-400 p-1 rounded hover:bg-red-500/10"
-                    title="Delete"
-                  >
-                    <BiTrash size={18} />
-                  </button>
+                {/* Description */}
+                <div className="text-sm text-[var(--text-normal)] whitespace-pre-wrap bg-[var(--bg-light)] p-3 rounded-md border border-[var(--border-color)]">
+                  {item.description}
                 </div>
-              </div>
 
-              {/* Description */}
-              <div className="text-sm text-[var(--text-normal)] whitespace-pre-wrap bg-[var(--bg-light)] p-3 rounded-md border border-[var(--border-color)]">
-                {item.description}
-              </div>
+                {/* AI Summary */}
+                <div className="flex items-start gap-2 bg-[var(--bg-light)]/50 border border-dashed border-[var(--border-color)] p-3 rounded-md text-sm italic text-[var(--text-muted)]">
+                  <LuSparkles className="w-4 h-4 mt-0.5 text-[var(--color-primary)] shrink-0" />
+                  <span>{item.ai_summary}</span>
+                </div>
 
-              {/* AI Summary */}
-              <div className="flex items-start gap-2 bg-[var(--bg-light)]/50 border border-dashed border-[var(--border-color)] p-3 rounded-md text-sm italic text-[var(--text-muted)]">
-                <LuSparkles className="w-4 h-4 mt-0.5 text-[var(--color-primary)] shrink-0" />
-                <span>{item.ai_summary}</span>
+                {/* Status Badge */}
+                {item.approved && (
+                  <span className="inline-block text-xs font-semibold text-green-500 bg-green-500/10 px-2 py-0.5 rounded-full w-fit">
+                    Approved
+                  </span>
+                )}
               </div>
-
-              {/* Status Badge */}
-              {item.approved && (
-                <span className="inline-block text-xs font-semibold text-green-500 bg-green-500/10 px-2 py-0.5 rounded-full w-fit">
-                  Approved
-                </span>
-              )}
             </div>
-          </div>
-        ))
+          ))}
+        </div>
       )}
     </div>
   );
